@@ -622,7 +622,7 @@ def signup():
             
             db.session.add(new_user)
             db.session.commit()
-            flash("Account created successfully! Please log in.")
+            flash("Account created successfully! Please log in.", category="success")
             return redirect(url_for('login'))
             
         except Exception as e:

@@ -1,3 +1,9 @@
+/* ===================================================================
+   MASTER AUTH STYLESHEET (login.css)
+   Consolidated from all HTML files for a consistent design.
+   =================================================================== */
+
+/* --- Global & Body --- */
 * {
     margin: 0;
     padding: 0;
@@ -5,404 +11,105 @@
 }
 
 body {
-    /* Background changed to solid Primary Dark Blue color */
-    font-family: 'Poppins', sans-serif;
-    background-color: #1e4b6d; /* Primary Dark Blue */
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #1a2332 0%, #2d3748 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+    padding: 20px;
 }
 
-/* Background image and overlay removed */
+/* Subtle animated background pattern */
 body::before {
-    display: none;
-}
-
-/* Merged Container Styles: Ensures login and signup look identical */
-.login-container, .signup-container {
-    background: rgba(255, 255, 255, 0.98);
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    
-    width: 90%; 
-    max-width: 400px; 
-    margin: 20px; 
-    
-    text-align: center;
-    backdrop-filter: blur(5px);
-    /* Border matching secondary blue (#1b5b8b) */
-    border: 1px solid rgba(27, 91, 139, 0.3);
-    transition: all 0.3s ease;
-}
-
-/* Hover animation for both containers */
-.login-container:hover, .signup-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-}
-
-h1 {
-    /* Secondary blue color (#1b5b8b) and Orbitron font */
-    color: #1b5b8b;
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    font-weight: bold;
-    font-family: 'orbitron', sans-serif;
-}
-
-/* Updated: Toggle buttons (Log In / Sign Up) - This group now only contains the Log In button for the form */
-.toggle {
-    display: flex;
-    justify-content: center; 
-    gap: 15px;
-    /* Reduced margin-bottom since the main login button is still inside, 
-       but the main Sign Up button will be separate. 
-       If you only use this for a navigation tab, this is fine. */
-    margin-bottom: 30px; 
-}
-
-.toggle button {
-    flex: 0 1 150px;
-    padding: 10px 20px;
-    border: 2px solid #1b5b8b; 
-    background: transparent;
-    color: #1b5b8b;
-    border-radius: 25px; 
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.toggle button.active {
-    background: #1b5b8b; /* Secondary Blue for active */
-    border-color: #1b5b8b;
-    color: white;
-    /* Blue shadow */
-    box-shadow: 0 4px 15px rgba(27, 91, 139, 0.4); 
-    transform: translateY(-2px);
-}
-
-.toggle button:hover {
-    background: rgba(27, 91, 139, 0.1); 
-    color: #1b5b8b; /* Secondary Blue on hover */
-    border-color: #1b5b8b;
-    transform: translateY(-2px);
-}
-
-.toggle button.active:hover {
-    background: #1e4b6d; /* Primary Dark Blue on active hover */
-    /* Darker Blue shadow */
-    box-shadow: 0 6px 20px rgba(30, 75, 109, 0.5); 
-    color: white;
-}
-
-/* Aesthetic buttons for Student/Professor (replaces radio group) */
-.user-type-selection {
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.user-type-selection label {
-    display: block;
-    margin-bottom: 12px;
-    color: #333;
-    font-weight: 500;
-}
-
-.radio-group {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-/* Hide the actual radio input */
-.radio-group input[type="radio"] {
-    display: none; 
-}
-
-/* Style for the button-like labels (Professor/Student) */
-.radio-group label {
-    display: inline-block;
-    flex: 1;
-    max-width: 150px;
-    margin: 0; 
-    
-    padding: 12px 15px;
-    border: 2px solid #1b5b8b; /* Secondary Blue Outline */
-    background: transparent;
-    color: #1b5b8b;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-/* Active state when radio is checked */
-.radio-group input[type="radio"]:checked + label {
-    background: #1b5b8b; /* Secondary Blue */
-    border-color: #1b5b8b;
-    color: white;
-    /* Blue shadow */
-    box-shadow: 0 4px 10px rgba(27, 91, 139, 0.4); 
-    transform: translateY(-2px);
-}
-
-/* Hover effect */
-.radio-group label:hover {
-    border-color: #1b5b8b;
-    color: #1b5b8b;
-    transform: translateY(-2px);
-}
-
-/* Checked and Hover effect */
-.radio-group input[type="radio"]:checked + label:hover {
-    background: #1e4b6d; /* Primary Dark Blue */
-    color: white;
-}
-
-.input-group {
-    position: relative;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-}
-
-.input-group .icon {
+    content: '';
     position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-    font-size: 1.1em;
-    transition: all 0.3s ease;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+       radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+       radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+    pointer-events: none;
 }
 
-.input-group input, .input-group select {
-    width: 100%;
-    padding: 14px 14px 14px 45px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 1em;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.input-group:hover .icon {
-    color: #1b5b8b; /* Secondary Blue */
-    transform: translateY(-50%) scale(1.1);
-}
-
-.input-group:hover input, 
-.input-group:hover select {
-    border-color: #1b5b8b; /* Secondary Blue */
-    transform: translateY(-2px);
-}
-
-.input-group input:focus, .input-group select:focus {
-    outline: none;
-    border-color: #1b5b8b; /* Secondary Blue */
-    /* Blue shadow */
-    box-shadow: 0 0 0 3px rgba(27, 91, 139, 0.2); 
-    transform: translateY(-2px);
-}
-
-.options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    font-size: 0.9em;
-}
-
-.options label {
-    display: flex;
+/* --- Back to Home/Login Button --- */
+.back-to-home {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #555;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.options label:hover {
-    color: #1b5b8b; /* Secondary Blue */
-    transform: translateX(5px);
-}
-
-.options input[type="checkbox"] {
-    accent-color: #1b5b8b; /* Secondary Blue */
-    transition: all 0.3s ease;
-}
-
-.options input[type="checkbox"]:hover {
-    transform: scale(1.2);
-}
-
-.options a {
-    color: #1b5b8b; /* Secondary Blue */
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: white;
     text-decoration: none;
+    border-radius: 10px;
     font-weight: 500;
+    font-size: 14px;
     transition: all 0.3s ease;
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.options a:hover {
-    text-decoration: underline;
-    transform: translateY(-2px);
-    color: #1e4b6d; /* Primary Dark Blue */
+.back-to-home:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: translateX(-4px);
+    border-color: rgba(59, 130, 246, 0.3);
 }
 
-/* --- ADJUSTED LOGIN BUTTON STYLE (REDUCED MARGIN) --- */
-.login-btn {
-    background: #1b5b8b; /* Secondary Blue */
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
+.back-to-home i {
+    font-size: 14px;
+}
+
+/* --- Main Auth Containers (Login, Signup, etc.) --- */
+.login-container,
+.signup-container {
+    background: white;
+    padding: 48px 40px;
+    border-radius: 16px;
+    box-shadow: 
+       0 20px 60px rgba(0, 0, 0, 0.3),
+       0 0 0 1px rgba(255, 255, 255, 0.1);
     width: 100%;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    letter-spacing: 0.5px;
     position: relative;
-    overflow: hidden;
-    /* Blue shadow for consistency */
-    box-shadow: 0 4px 15px rgba(27, 91, 139, 0.3); 
-    /* CHANGED: Reduced margin to tighten the button stack */
-    margin-bottom: 10px; 
+    z-index: 1;
 }
 
-.login-btn:hover {
-    background: #1e4b6d; /* Primary Dark Blue */
-    transform: translateY(-3px);
-    /* Dark Blue shadow */
-    box-shadow: 0 8px 20px rgba(30, 75, 109, 0.4);
+.login-container {
+    max-width: 440px;
 }
 
-.login-btn:active {
-    transform: translateY(-1px);
+.signup-container {
+    max-width: 480px;
 }
 
-/* Ripple effect for button */
-.login-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%);
-    transform-origin: 50% 50%;
-}
-
-.login-btn:focus:not(:active)::after {
-    animation: ripple 1s ease-out;
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(20, 20);
-        opacity: 0;
-    }
-}
-
-/* --- NEW SIGN UP BUTTON (LOOKS IDENTICAL TO LOGIN) --- */
-/* This new class should be applied to the Sign Up button/link in your HTML. */
-.signup-btn-as-primary {
-    /* Inherit all styles from .login-btn visually */
-    background: #1b5b8b; /* Secondary Blue */
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
-    width: 100%;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(27, 91, 139, 0.3); 
-    /* Space it from the login button */
-    margin-top: 10px; 
-    margin-bottom: 20px; /* Space from elements below */
+/* --- Typography --- */
+h1 {
+    color: #1a2332;
+    margin-bottom: 8px;
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
     text-align: center;
-    display: block; /* Important if used on an <a> tag */
+    letter-spacing: -0.5px;
 }
 
-.signup-btn-as-primary:hover {
-    background: #1e4b6d; /* Primary Dark Blue */
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(30, 75, 109, 0.4);
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 32px;
+    font-weight: 400;
 }
 
-.signup-btn-as-primary:active {
-    transform: translateY(-1px);
-}
-
-.signup-btn-as-primary::after {
-    /* Inherit ripple effect if needed (for an <a> tag you'd need JS) */
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%);
-    transform-origin: 50% 50%;
-}
-
-.signup-btn-as-primary:focus:not(:active)::after {
-    animation: ripple 1s ease-out;
-}
-
-
-/* --- END NEW SIGN UP BUTTON --- */
-
-/* The Sign Up Prompt section can be adjusted/removed depending on the new button use */
-.signup-prompt {
-    margin-top: 150px;
-    font-size: 0.9em;
-    color: #555;
-}
-
-.signup-prompt a {
-    color: #1b5b8b; /* Secondary Blue */
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.signup-prompt a:hover {
-    text-decoration: underline;
-    color: #1e4b6d; /* Primary Dark Blue */
-}
-
-/* Optional: If you want the Sign Up link to look like a secondary button */
-/* HIDING THE OLD SECONDARY BUTTON STYLE */
-.signup-secondary-btn {
-    display: none; 
-}
-
-
-/* Flash Messages */
+/* --- Flash Messages (Error, Success, Info) --- */
 .flash-messages {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .flash-message {
@@ -417,24 +124,6 @@ h1 {
     border-left: 4px solid;
 }
 
-.flash-message.success {
-    background: #d1fae5;
-    color: #065f46;
-    border-left-color: #10b981;
-}
-
-.flash-message.error {
-    background: #fee2e2;
-    color: #dc2626;
-    border-left-color: #dc2626;
-}
-
-.flash-message.info {
-    background: #dbeafe;
-    color: #1e40af;
-    border-left-color: #3b82f6;
-}
-
 .flash-message::before {
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
@@ -442,101 +131,507 @@ h1 {
     flex-shrink: 0;
 }
 
-.flash-message.success::before {
-    content: '\f00c';
+/* Error (Default) */
+.flash-message,
+.flash-message.error {
+    background: #fee2e2;
+    color: #dc2626;
+    border-left-color: #dc2626;
 }
-
+.flash-message::before,
 .flash-message.error::before {
-    content: '\f06a';
+    content: '\f06a'; /* fa-exclamation-circle */
 }
 
+/* Success */
+.flash-message.success {
+    background: #d4edda;
+    color: #155724;
+    border-left-color: #28a745;
+}
+.flash-message.success::before {
+    content: '\f058'; /* fa-check-circle */
+    color: #28a745;
+}
+
+/* Info */
+.flash-message.info {
+    background: #dbeafe;
+    color: #1e40af;
+    border-left-color: #3b82f6;
+}
 .flash-message.info::before {
-    content: '\f05a';
+    content: '\f05a'; /* fa-info-circle */
 }
 
 @keyframes slideIn {
     from {
-        opacity: 0;
-        transform: translateY(-10px);
+       opacity: 0;
+       transform: translateY(-10px);
     }
     to {
-        opacity: 1;
-        transform: translateY(0);
+       opacity: 1;
+       transform: translateY(0);
     }
 }
 
-.forgot-password-link {
-    text-align: center;
-    margin-top: 15px;
+/* --- User Type Selection (Radio Buttons) --- */
+.user-type-selection {
+    margin-bottom: 28px;
 }
 
-.forgot-password-link a {
-    color: #1b5b8b; /* Secondary Blue */
-    text-decoration: none;
+.user-type-selection > label {
+    display: block;
+    margin-bottom: 12px;
+    color: #334155;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.radio-group input[type="radio"] {
+    display: none;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.radio-group label i {
+    font-size: 18px;
+}
+
+.radio-group input[type="radio"]:checked + label {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.radio-group label:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+/* --- Input Groups & Forms --- */
+.input-group {
+    position: relative;
+    margin-bottom: 20px; /* Default spacing */
+}
+
+/* Signup page has slightly tighter spacing */
+.signup-container .input-group {
+    margin-bottom: 18px;
+}
+
+.input-group .icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    z-index: 1;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    background: white;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+    -webkit-appearance: none; /* Fix for select on iOS */
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Add dropdown arrow for select */
+.input-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 48px; /* Make room for arrow */
+}
+
+.input-group input::placeholder {
+    color: #94a3b8;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-group input:focus + .icon,
+.input-group:focus-within .icon {
+    color: #3b82f6;
+}
+
+/* --- Password Toggle Button (Eye Icon) --- */
+.password-toggle {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.1rem; /* 16px */
+    color: #94a3b8;
+    background: none;
+    border: none;
+    padding: 0.5rem; /* 8px */
+    transition: color 0.2s ease;
+    z-index: 2;
+}
+.password-toggle:hover {
+    color: #3b82f6;
+}
+
+/* --- Login Page: Options (Remember/Forgot) --- */
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+.options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    cursor: pointer;
     font-weight: 500;
 }
 
-.forgot-password-link a:hover {
+.options input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+
+.options a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.options a:hover {
+    color: #2563eb;
     text-decoration: underline;
 }
 
-/* Reset password page specific */
-.password-requirements {
-    font-size: 0.8em;
-    color: #666;
-    text-align: left;
-    margin-bottom: 15px;
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 5px;
-    /* Secondary blue for border (#1b5b8b) */
-    border-left: 3px solid #1b5b8b;
+/* --- Main Action Button (Login, Signup, Reset) --- */
+.login-btn,
+.signup-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 20px;
 }
 
-/* Responsive adjustments for very small screens */
-@media (max-width: 450px) {
-    .login-container, .signup-container {
-        padding: 30px 20px; 
-        margin: 10px; 
-        width: 95%; 
-    }
+.login-btn:hover,
+.signup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
 
+.login-btn:active,
+.signup-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn::before,
+.signup-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.login-btn:hover::before,
+.signup-btn:hover::before {
+    left: 100%;
+}
+
+/* --- Bottom Redirect Link (Sign Up / Log In) --- */
+.signup-redirect,
+.login-redirect {
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.signup-redirect a,
+.login-redirect a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.signup-redirect a:hover,
+.login-redirect a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 540px) { /* Signup breakpoint */
+    .signup-container {
+       padding: 36px 24px;
+    }
+    .name-fields {
+       grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) { /* Login breakpoint */
+    .login-container {
+       padding: 36px 24px;
+    }
     h1 {
-        font-size: 2em; 
+       font-size: 28px;
     }
-
-    .radio-group label {
-        max-width: none;
-        padding: 10px 10px;
+    .back-to-home {
+       top: 16px;
+       left: 16px;
+       padding: 10px 16px;
+       font-size: 13px;
+    }
+    .radio-group {
+       grid-template-columns: 1fr;
     }
 }
 
-/* ✅ ADD: Back to home button styles */
-.back-to-home {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background:#1b5b8b;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* --- Button Loading State --- */
+.login-btn.loading,
+.signup-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+    color: transparent; /* Hide text */
 }
 
-.back-to-home:hover {
-  background: #1b5b8b;
-  transform: translateX(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+.login-btn.loading::after,
+.signup-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
 }
 
-.back-to-home i {
-  font-size: 1rem;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
+/* ===================================================================
+   PAGE-SPECIFIC STYLES
+   =================================================================== */
+
+/* --- Signup Page --- */
+.name-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+#studentFields,
+#professorFields {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+       opacity: 0;
+       transform: translateY(-10px);
+    }
+    to {
+       opacity: 1;
+       transform: translateY(0);
+    }
+}
+
+.checkbox-group {
+    margin: 20px 0 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.checkbox-group a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.checkbox-group a:hover {
+    text-decoration: underline;
+}
+
+.password-strength {
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+    display: none;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0;
+    transition: all 0.3s ease;
+    border-radius: 3px;
+}
+
+.password-strength.weak .password-strength-bar {
+    width: 33%;
+    background: #ef4444;
+}
+
+.password-strength.medium .password-strength-bar {
+    width: 66%;
+    background: #f59e0b;
+}
+
+.password-strength.strong .password-strength-bar {
+    width: 100%;
+    background: #10b981;
+}
+
+/* --- Verify Identity Page --- */
+.security-notice {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.security-notice i {
+    color: #3b82f6;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.security-notice-content {
+    flex: 1;
+}
+
+.security-notice-content h4 {
+    color: #1e40af;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.security-notice-content p {
+    color: #3b82f6;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* --- Reset Password Page --- */
+.password-requirements {
+    background: #f1f5f9;
+    border-left: 3px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.password-requirements h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.password-requirements ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.password-requirements li {
+    margin: 4px 0;
+    line-height: 1.5;
+}

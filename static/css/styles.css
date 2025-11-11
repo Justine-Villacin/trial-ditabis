@@ -858,17 +858,20 @@ footer::before {
 
 .contact-container {
   display: flex;
-  justify-content: center; /* Center the single contact-info */
-  gap: 80px;
+  /* ✅ CHANGED: Allow space for the form */
+  justify-content: space-between;
+  gap: 50px;
   max-width: 1200px;
   margin: 0 auto;
   flex-wrap: wrap;
 }
 
 .contact-info {
-  flex: 0 1 600px; /* Give it a reasonable max width */
+  /* ✅ CHANGED: Adjust flex-basis to make room */
+  flex: 1 1 500px;
   min-width: 350px;
-  text-align: justify; /* Center align the content */
+  /* ✅ CHANGED: Switched to left-align for info box */
+  text-align: left;
   padding: 40px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius-lg);
@@ -896,7 +899,7 @@ footer::before {
   display: flex;
   flex-direction: column;
   gap: 25px;
-  align-items: justify; /* Center the contact items */
+  align-items: flex-start; /* ✅ CHANGED: Was 'justify' */
 }
 
 .contact-item {
@@ -908,7 +911,7 @@ footer::before {
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition);
-  text-align: justify;
+  text-align: left; /* ✅ CHANGED: Was 'justify' */
 }
 
 .contact-item:hover {
@@ -916,17 +919,111 @@ footer::before {
   transform: translateX(10px);
 }
 
+.contact-item strong {
+  flex-shrink: 0; /* Prevents "Email:" etc. from wrapping */
+}
+
 .contact-item i {
   color: var(--accent-orange);
   width: 24px;
-  text-align: justify;
+  text-align: center; /* ✅ CHANGED: Was 'justify' */
   font-size: 18px;
 }
 
-/* Remove the contact-form styles since we don't need them anymore */
+/* ✅ ADDED: Full styles for the contact form */
 .contact-form {
-  display: none;
+  flex: 1 1 500px;
+  min-width: 350px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-lg);
+  padding: 40px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-light);
+  display: flex; /* Added */
+  flex-direction: column; /* Added */
 }
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%; /* Added */
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--light-text);
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  transition: var(--transition);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 15px rgba(249, 124, 66, 0.3);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Style the button like the login button */
+.contact-form button {
+  background: linear-gradient(135deg, var(--accent-orange), #ff9a3d);
+  border: none;
+  padding: 16px 30px;
+  border-radius: 25px;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 6px 20px rgba(249, 124, 66, 0.4);
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.contact-form button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: var(--transition-slow);
+}
+
+.contact-form button:hover {
+  background: linear-gradient(135deg, var(--accent-orange-hover), #e06b35);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(249, 124, 66, 0.6);
+}
+
+.contact-form button:hover:before {
+  left: 100%;
+}
+
 
 /* Contact Form Message Styles */
 #contactMessage {
@@ -934,6 +1031,9 @@ footer::before {
   font-weight: 500;
   text-align: center;
   transition: var(--transition);
+  /* ✅ ADDED: Styles from inline HTML */
+  margin-top: 1rem;
+  padding: 1rem;
 }
 
 /* Loading Animation */
@@ -1026,6 +1126,18 @@ footer::before {
   .position-1, .position-3 {
     opacity: 0.3;
   }
+  
+  /* ✅ ADDED: Make form stack on top of info box on tablets */
+  .contact-container {
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+  .contact-info, .contact-form {
+    flex-basis: auto; /* Reset flex-basis */
+    width: 100%;
+    max-width: 600px; /* Give them a max-width */
+  }
 }
 
 @media (max-width: 768px) {
@@ -1100,15 +1212,17 @@ footer::before {
   
   .contact-container {
     flex-direction: column;
-    gap: 50px;
+    gap: 30px; /* Reduced from 50px */
   }
   
   .contact-info, .contact-form {
     min-width: 100%;
+    max-width: 100%; /* Allow full width */
+    padding: 30px 25px; /* Reduce padding on mobile */
   }
   
   .contact-info {
-    text-align: center;
+    text-align: left; /* Keep info box left-aligned */
   }
   
   .footer-container {
@@ -1214,7 +1328,7 @@ footer::before {
 
 /* Print Styles */
 @media print {
-  .navbar, .carousel-btn, .login-btn, .cta-button {
+  .navbar, .carousel-btn, .login-btn, .cta-button, .contact-form {
     display: none;
   }
   
