@@ -2310,18 +2310,17 @@ async function openSubmissionModal(assignmentId) {
   
   console.log('✅ Assignment found:', assignment.title);
   
-  // ✅ FIX: Check if assignment is overdue - BLOCK SUBMISSION
+  // ✅ Check if assignment is overdue
   const dueDate = new Date(assignment.dueDate);
   const now = new Date();
   
   if (now > dueDate) {
-    // ✅ CHANGED: Show error and DON'T allow submission
-    alert(
+    const confirmLate = confirm(
       `⏰ This assignment is overdue!\n\n` +
       `Deadline was: ${dueDate.toLocaleString()}\n\n` +
-      `You cannot submit after the deadline. Please contact your professor if you need an extension.`
+      `Do you still want to submit? (Your professor may not accept late submissions)`
     );
-    return; // ✅ Block submission
+    if (!confirmLate) return;
   }
   
   // Check if already submitted
@@ -2334,7 +2333,13 @@ async function openSubmissionModal(assignmentId) {
     return;
   }
   
-  // ✅ Store data in modal
+  // ✅ CRITICAL: Clear previous modal state FIRST
+  modal.dataset.assignmentId = '';
+  modal.dataset.classId = '';
+  modal.dataset.isResubmit = '';
+  modal.dataset.previousSubmitDate = '';
+  
+  // ✅ NOW set the new data
   modal.dataset.assignmentId = String(assignmentId);
   modal.dataset.classId = String(currentClassId);
   modal.dataset.isResubmit = existingSubmission ? 'true' : 'false';
@@ -2446,7 +2451,7 @@ async function submitAssignment() {
         throw new Error('Assignment not found. It may have been deleted by your professor.');
       }
       
-      // Check deadline again (but allow submission)
+      // Check deadline again
       const dueDate = new Date(assignment.dueDate);
       const now = new Date();
       if (now > dueDate) {
@@ -4555,3 +4560,7 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+
+// localStorage.clear();
+// window.location.reload();

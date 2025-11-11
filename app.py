@@ -218,10 +218,16 @@ def init_db():
 # Initialize database only when app starts, not during imports
 def initialize_app():
     with app.app_context():
-        init_db()
+        try:
+            db.create_all()
+            cleanup_expired_tokens()
+            print("✅ Database initialized successfully!")
+        except Exception as e:
+            print(f"❌ Database initialization error: {e}")
+            raise
 
 # Call initialization when the app starts
-if os.environ.get("WERKZEUG_RUN_MAIN") or __name__ == '__main__':
+with app.app_context():
     initialize_app()
 
 

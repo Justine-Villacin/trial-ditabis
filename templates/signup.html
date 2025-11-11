@@ -568,23 +568,29 @@
          </div>
 
          <div class="input-group" style="position: relative;">
-         <i class="icon fas fa-lock"></i>
-         <input type="password" id="password" name="password" placeholder="Password" required>
-         <button type="button" 
-                  onclick="togglePasswordVisibility('password', this)" 
-                  style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; z-index: 2;">
-            <i class="fas fa-eye"></i>
-         </button>
+            <i class="icon fas fa-lock"></i>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <button type="button" 
+                     onclick="togglePasswordVisibility('password', this)" 
+                     style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; z-index: 2;">
+               <i class="fas fa-eye"></i>
+            </button>
          </div>
+
          <div class="input-group" style="position: relative;">
-         <i class="icon fas fa-lock"></i>
-         <input type="password" id="password" name="password" placeholder="Password" required>
-         <button type="button" 
-                  onclick="togglePasswordVisibility('password', this)" 
-                  style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; z-index: 2;">
-            <i class="fas fa-eye"></i>
-         </button>
+            <i class="icon fas fa-lock"></i>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+            <button type="button" 
+                     onclick="togglePasswordVisibility('confirmPassword', this)" 
+                     style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; z-index: 2;">
+               <i class="fas fa-eye"></i>
+            </button>
          </div>
+         
+         <div class="password-strength" id="passwordStrength">
+            <div class="password-strength-bar"></div>
+         </div>
+         
          <div class="checkbox-group">
             <input type="checkbox" name="policy" id="policy" required>
             <label for="policy">

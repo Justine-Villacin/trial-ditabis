@@ -4391,25 +4391,43 @@ function closeStudentDetailsModal() {
 }
 
 // Save assignment
+// Save assignment - FIXED VERSION
 async function saveAssignment() {
-  const title = document.getElementById('assignment-title').value.trim();
-  const description = document.getElementById('assignment-description').value.trim();
-  const dueDate = document.getElementById('assignment-due-date').value;
-  const points = document.getElementById('assignment-points').value;
-  const instructions = document.getElementById('assignment-instructions').value.trim();
+  console.log('💾 Starting assignment creation process...');
+  
+  const title = document.getElementById('assignment-title')?.value.trim();
+  const description = document.getElementById('assignment-description')?.value.trim();
+  const dueDate = document.getElementById('assignment-due-date')?.value;
+  const points = document.getElementById('assignment-points')?.value;
+  const instructions = document.getElementById('assignment-instructions')?.value.trim();
   const filesInput = document.getElementById('assignment-files');
   
-  if (!title || !description || !dueDate) {
-    showWarningToast('Please fill in all required fields');
+  // ✅ FIX: Better validation with specific error messages
+  if (!title) {
+    showWarningToast('Please enter an assignment title');
+    document.getElementById('assignment-title')?.focus();
+    return;
+  }
+  
+  if (!description) {
+    showWarningToast('Please enter an assignment description');
+    document.getElementById('assignment-description')?.focus();
+    return;
+  }
+  
+  if (!dueDate) {
+    showWarningToast('Please select a due date');
+    document.getElementById('assignment-due-date')?.focus();
     return;
   }
   
   const classItem = classes.find(c => c.id === currentClassId);
   if (!classItem) {
-    showErrorToast('Error: Class not found.');
+    showErrorToast('Error: Class not found. Please reopen the class.');
     return;
   }
   
+  // ✅ FIX: Create assignment object with proper structure
   const assignment = {
     id: Date.now().toString(),
     title,
@@ -4422,18 +4440,28 @@ async function saveAssignment() {
     files: []
   };
   
-  // Ã¢Å“â€¦ FIX: Upload ALL files before saving
+  console.log('📝 Assignment object created:', assignment);
+  
+  // ✅ FIX: Handle file uploads with better error handling
   if (filesInput && filesInput.files && filesInput.files.length > 0) {
     try {
       const saveBtn = document.getElementById('save-assignment');
-      const originalText = saveBtn.innerHTML;
-      saveBtn.disabled = true;
+      if (saveBtn) {
+        const originalText = saveBtn.innerHTML;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading Files...';
+      }
       
-      // Ã¢Å“â€¦ UPLOAD ALL FILES IN PARALLEL (faster)
-      const uploadPromises = Array.from(filesInput.files).map(async (file, index) => {
-        console.log(`Uploading file ${index + 1}/${filesInput.files.length}: ${file.name}`);
+      console.log(`📁 Uploading ${filesInput.files.length} file(s)...`);
+      
+      // Upload files sequentially for better error tracking
+      for (let i = 0; i < filesInput.files.length; i++) {
+        const file = filesInput.files[i];
+        console.log(`📤 Uploading file ${i + 1}/${filesInput.files.length}: ${file.name}`);
         
-        saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading ${index + 1}/${filesInput.files.length}...`;
+        if (saveBtn) {
+          saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading ${i + 1}/${filesInput.files.length}...`;
+        }
         
         const formData = new FormData();
         formData.append('file', file);
@@ -4444,49 +4472,60 @@ async function saveAssignment() {
         });
         
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.error || `Failed to upload ${file.name}`);
         }
         
         const result = await response.json();
+        console.log('✅ File uploaded successfully:', file.name);
         
-        return {
+        assignment.files.push({
           name: file.name,
           type: file.type,
           size: file.size,
-          url: result.url
-        };
-      });
+          url: result.url || result.file_url,
+          file_id: result.file_id
+        });
+      }
       
-      // Ã¢Å“â€¦ WAIT FOR ALL UPLOADS TO COMPLETE
-      assignment.files = await Promise.all(uploadPromises);
-      
-      saveBtn.innerHTML = originalText;
-      saveBtn.disabled = false;
-      
-      console.log(`Ã¢Å“â€¦ All ${assignment.files.length} files uploaded successfully`);
-      
-      await saveAssignmentToClass(assignment);
+      console.log(`✅ All ${assignment.files.length} files uploaded successfully`);
       
     } catch (uploadError) {
-      console.error('Error during file upload:', uploadError);
+      console.error('❌ Error during file upload:', uploadError);
       showErrorToast('Error uploading files: ' + uploadError.message);
+      
+      // Reset save button
       const saveBtn = document.getElementById('save-assignment');
-      saveBtn.innerHTML = 'Create Assignment';
-      saveBtn.disabled = false;
+      if (saveBtn) {
+        saveBtn.innerHTML = 'Create Assignment';
+        saveBtn.disabled = false;
+      }
       return;
     }
-  } else {
-    await saveAssignmentToClass(assignment);
   }
+  
+  // ✅ FIX: Proceed to save the assignment
+  await saveAssignmentToClass(assignment);
 }
 
 // Save assignment to class
+// Save assignment to class - ENHANCED VERSION
 async function saveAssignmentToClass(assignment) {
+  console.log('💾 Saving assignment to class...');
+  
   const classItem = classes.find(c => c.id === currentClassId);
-  if (!classItem) return;
+  if (!classItem) {
+    showErrorToast('Error: Class not found.');
+    return;
+  }
   
   const dueDate = new Date(assignment.dueDate);
+  
+  // ✅ FIX: Create confirmation modal with better error handling
+  const existingModal = document.getElementById('calendar-confirm-modal');
+  if (existingModal) {
+    existingModal.remove();
+  }
   
   const confirmModal = document.createElement('div');
   confirmModal.className = 'modal';
@@ -4502,14 +4541,15 @@ async function saveAssignmentToClass(assignment) {
       <div class="modal-body">
         <div style="text-align: center; padding: 1rem;">
           <i class="fas fa-calendar-check" style="font-size: 3rem; color: #4a90a4; margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Confirm Assignment Schedule</h3>
+          <h3 style="margin-bottom: 1rem;">Confirm Assignment Details</h3>
           <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left;">
             <p style="margin-bottom: 0.5rem;"><strong>Assignment:</strong> ${assignment.title}</p>
             <p style="margin-bottom: 0.5rem;"><strong>Class:</strong> ${classItem.name}</p>
             <p style="margin-bottom: 0.5rem;"><strong>Due Date:</strong> ${dueDate.toLocaleString()}</p>
-            <p style="margin-bottom: 0;"><strong>Points:</strong> ${assignment.points}</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Points:</strong> ${assignment.points}</p>
+            ${assignment.files.length > 0 ? `<p style="margin-bottom: 0;"><strong>Files:</strong> ${assignment.files.length} attached</p>` : ''}
           </div>
-          <p style="color: #666; font-size: 0.9rem;">This assignment will be visible to all students.</p>
+          <p style="color: #666; font-size: 0.9rem;">This assignment will be visible to all students in the class.</p>
         </div>
       </div>
       <div class="modal-footer" style="display: flex; gap: 1rem; justify-content: center;">
@@ -4517,7 +4557,7 @@ async function saveAssignmentToClass(assignment) {
           <i class="fas fa-times"></i> Cancel
         </button>
         <button id="confirm-calendar-ok" class="btn-primary" style="min-width: 120px;">
-          <i class="fas fa-check"></i> OK, Create Assignment
+          <i class="fas fa-check"></i> Create Assignment
         </button>
       </div>
     </div>
@@ -4527,10 +4567,14 @@ async function saveAssignmentToClass(assignment) {
   
   return new Promise((resolve, reject) => {
     document.getElementById('confirm-calendar-ok').addEventListener('click', async function() {
-      confirmModal.remove();
+      console.log('✅ User confirmed assignment creation');
       
       try {
-        // ✅ SAVE TO DATABASE FIRST
+        // Update button state
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+        
+        // ✅ FIX: Save to database first
         const response = await fetch('/api/professor/assignments', {
           method: 'POST',
           headers: {
@@ -4544,42 +4588,58 @@ async function saveAssignmentToClass(assignment) {
         
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.error || 'Failed to save assignment');
+          throw new Error(error.error || 'Failed to save assignment to database');
         }
         
         const result = await response.json();
-        assignment.id = result.assignment_id; // Update with DB ID
+        console.log('✅ Assignment saved to database:', result);
         
-        // ✅ THEN update local state
+        // ✅ FIX: Update assignment ID with database ID
+        assignment.id = result.assignment_id || result.id || assignment.id;
+        
+        // ✅ FIX: Update local state
         if (!classItem.assignments) {
           classItem.assignments = [];
         }
         classItem.assignments.push(assignment);
         
+        // ✅ FIX: Update classes array
+        const classIndex = classes.findIndex(c => c.id === currentClassId);
+        if (classIndex !== -1) {
+          classes[classIndex] = classItem;
+        }
+        
         // Update localStorage as cache
-        localStorage.setItem('professor_classes', JSON.stringify(classes));
+        try {
+          localStorage.setItem('professor_classes', JSON.stringify(classes));
+        } catch (storageError) {
+          console.warn('⚠️ Could not update localStorage:', storageError);
+        }
         
-        // Update calendar
-        // const dateKey = `${dueDate.getFullYear()}-${dueDate.getMonth() + 1}-${dueDate.getDate()}`;
-        // if (!calendarEvents[dateKey]) {
-          // calendarEvents[dateKey] = [];
-        // }
-        // calendarEvents[dateKey].push(`Assignment Due: ${assignment.title} (${classItem.name})`);
-        // localStorage.setItem('calendar_events', JSON.stringify(calendarEvents));
+        // Close modals
+        confirmModal.remove();
+        if (assignmentModal) {
+          assignmentModal.style.display = 'none';
+        }
         
+        // Reset form
+        resetAssignmentForm();
+        
+        // Refresh UI
         loadClassAssignments();
-        document.getElementById('class-assignments').textContent = classItem.assignments.length;
+        if (document.getElementById('class-assignments')) {
+          document.getElementById('class-assignments').textContent = classItem.assignments.length;
+        }
         updateDashboardStats();
         
+        // Refresh calendar if function exists
         if (typeof initializeCalendar === 'function') {
           initializeCalendar();
         }
         
-        assignmentModal.style.display = 'none';
-        resetAssignmentForm();
+        showSuccessToast(`Assignment "${assignment.title}" created successfully!`);
         
-        showSuccessToast('Assignment created successfully and added to calendar!');
-        
+        // Add notification
         addNotification(
           'assignment',
           'New Assignment Created',
@@ -4588,20 +4648,31 @@ async function saveAssignmentToClass(assignment) {
         );
         
         resolve();
+        
       } catch (error) {
         console.error('❌ Error saving assignment:', error);
-        showErrorToast('Error saving assignment: ' + error.message);
+        showErrorToast('Error creating assignment: ' + error.message);
+        
+        // Reset button
+        const confirmBtn = document.getElementById('confirm-calendar-ok');
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<i class="fas fa-check"></i> Create Assignment';
+        }
+        
         reject(error);
       }
     });
     
     document.getElementById('cancel-calendar-confirm').addEventListener('click', function() {
+      console.log('❌ Assignment creation cancelled by user');
       confirmModal.remove();
       reject(new Error('Assignment creation cancelled'));
     });
     
     confirmModal.addEventListener('click', function(e) {
       if (e.target === confirmModal) {
+        console.log('❌ Assignment creation cancelled (outside click)');
         confirmModal.remove();
         reject(new Error('Assignment creation cancelled'));
       }
@@ -5568,7 +5639,7 @@ function downloadFile(filename, urlOrContent) {
   }
   
   console.error('❌ Invalid file format:', urlOrContent ? urlOrContent.substring(0, 50) : 'empty');
-  showWarningToast('Invalid file format. Please contact your professor.');
+  alert('⚠️ Invalid file format. Please contact your professor.');
 }
 
 // VIDEO PLAYER for professors
@@ -5887,7 +5958,7 @@ function deleteEvent(dateKey, eventIndex) {
     openEventModal(year, month, day);
   }
   
-  showSuccessToast('Event deleted successfully!');
+  alert('Event deleted successfully!');
 }
 
 document.getElementById('close-event').addEventListener('click', () => {
@@ -5898,12 +5969,12 @@ document.getElementById('close-event').addEventListener('click', () => {
 document.getElementById('save-event').addEventListener('click', () => {
     const eventText = document.getElementById('event-text').value.trim();
     if (!eventText) {
-        showWarningToast('Please enter event text');
+        alert('Please enter event text');
         return;
     }
     
     if (!currentSelectedDate) {
-        showWarningToast('Error: No date selected.');
+        alert('Error: No date selected.');
         return;
     }
     
@@ -5926,7 +5997,7 @@ document.getElementById('save-event').addEventListener('click', () => {
     const day = currentSelectedDate.getDate();
     openEventModal(year, month, day);
     
-    showSuccessToast('Event saved successfully!');
+    alert('Event saved successfully!');
 });
 
 // Update dashboard statistics
@@ -6139,13 +6210,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        showInfoToast('Please select an image file (JPG, PNG, GIF)');
+        alert('Please select an image file (JPG, PNG, GIF)');
         return;
       }
       
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        sho('Image size must be less than 5MB');
+        alert('Image size must be less than 5MB');
         return;
       }
       
@@ -6739,3 +6810,6 @@ window.addEventListener('error', function(e) {
 window.addEventListener('unhandledrejection', function(e) {
   console.error('Unhandled promise rejection:', e.reason);
 });
+
+// localStorage.clear();
+// window.location.reload();
