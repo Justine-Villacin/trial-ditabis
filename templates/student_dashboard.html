@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnSync - Student Dashboard</title>
+  <link rel="stylesheet" href="/static/css/student-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="student-dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <i class="fas fa-graduation-cap"></i>
+      <strong>LEARNSYNC</strong>
+    </div>
+
+    <nav>
+      <a onclick="showSection('dashboard-section', this)" class="active">
+        <i class="fas fa-th-large"></i> <span>Dashboard</span>
+      </a>
+      <a onclick="showSection('calendar-section', this)">
+        <i class="fas fa-calendar-alt"></i> <span>Calendar</span>
+      </a>
+      <a onclick="showSection('classes-section', this)">
+        <i class="fas fa-book-open"></i> <span>My Classes</span>
+      </a>
+      <a onclick="showSection('assignments-section', this)">
+        <i class="fas fa-tasks"></i> <span>Assignments</span>
+      </a>
+      <a onclick="showSection('grades-section', this)">
+        <i class="fas fa-chart-line"></i> <span>Grades</span>
+      </a>
+      <!-- <a onclick="showSection('archived-classes-section', this)">
+        <i class="fas fa-archive"></i> <span>Archived</span>
+      </a> -->
+            <!-- ✅ NEW: Missed Tasks Link -->
+      <a onclick="showSection('missed-tasks-section', this)">
+        <i class="fas fa-exclamation-triangle"></i> <span>Missed Tasks</span>
+      </a>
+    </nav>
+
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="topbar">
+      <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="right-controls">
+        <!-- ✅ FIX #3: Main Search Bar (separate from assignment search) -->
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search classes, assignments, materials...">
+        </div>
+        <div class="profile">
+          <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">0</span>
+          </div>
+          <div class="profile-dropdown" id="profile-dropdown">
+            <img id="topbar-avatar" src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=4a90a4&color=fff" alt="Profile" class="avatar">
+            <div class="profile-info">
+              <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
+              <span class="profile-role">Student</span>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+            
+            <div class="dropdown-menu" id="dropdown-menu">
+              <a onclick="showSection('profile-section')"><i class="fas fa-user"></i> My Profile</a>
+              <a onclick="showSection('settings-section')"><i class="fas fa-cog"></i> Settings</a>
+              <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Log out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard-section" class="content-section active">
+      <div class="welcome">
+        <h1>Welcome Back, {{ user.first_name }}!</h1>
+        <p>Here's an overview of your classes and upcoming assignments.</p>
+      </div>
+      
+      <div class="dashboard-content">
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="enrolled-classes-count">0</h3>
+              <p>Enrolled Classes</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="pending-assignments">0</h3>
+              <p>Pending Assignments</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="completed-assignments">0</h3>
+              <p>Completed</p>
+            </div>
+          </div>
+
+          <!-- ✅ NEW: Missed Tasks Card -->
+          <div class="stat-card warning">
+            <div class="stat-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="missed-tasks-count">0</h3>
+              <p>Missed Tasks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archived Classes Section -->
+    <div id="archived-classes-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-archive"></i> Archived Classes</h2>
+      </div>
+      <div class="archived-classes-list">
+        <!-- Archived classes will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- ✅ FIX #4: Profile Section (Password change removed) -->
+    <div id="profile-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-user"></i> My Profile</h2>
+      </div>
+      
+      <div class="profile-content">
+        <div id="profile-message" class="profile-message"></div>
+        
+        <div class="profile-header">
+          <div class="profile-avatar-section">
+            <div class="avatar-container">
+              <img id="profile-avatar" src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=4a90a4&color=fff" alt="Profile" class="profile-avatar">
+              <label for="avatar-upload" class="avatar-upload-btn">
+                <i class="fas fa-camera"></i>
+              </label>
+              <input type="file" id="avatar-upload" accept="image/*" hidden>
+            </div>
+            <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+            <p>Student - {{ user.course }}</p>
+          </div>
+        </div>
+
+        <div class="profile-details">
+          <div class="profile-section">
+            <h3>Personal Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>First Name</label>
+                <div class="info-value" id="profile-first-name">{{ user.first_name }}</div>
+              </div>
+              <div class="info-item">
+                <label>Last Name</label>
+                <div class="info-value" id="profile-last-name">{{ user.last_name }}</div>
+              </div>
+              <div class="info-item">
+                <label>Email</label>
+                <div class="info-value" id="profile-email">{{ user.username }}</div>
+              </div>
+              <div class="info-item">
+                <label>Student ID</label>
+                <div class="info-value" id="profile-student-id">{{ user.student_id }}</div>
+              </div>
+              <div class="info-item">
+                <label>Program</label>
+                <div class="info-value" id="profile-program">{{ user.course }}</div>
+              </div>
+              <div class="info-item">
+                <label>Year Level</label>
+                <div class="info-value" id="profile-year-level">{{ user.year_level }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Calendar Section -->
+    <div id="calendar-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-calendar-alt"></i> Calendar</h2>
+      </div>
+      <div class="calendar-container">
+        <div class="calendar">
+          <div class="calendar-header">
+            <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+            <h3 id="month-year"></h3>
+            <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="day-names">
+            <span>Sun</span><span>Mon</span><span>Tue</span>
+            <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div id="calendar-days" class="calendar-days"></div>
+        </div>
+
+        <div class="event-modal">
+          <div class="event-modal-header">
+            <h3 id="selected-date"></h3>
+          </div>
+          <div class="event-modal-content">
+            <div class="event-list-container">
+              <h4>Events & Deadlines</h4>
+              <ul id="event-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classes Section -->
+    <div id="classes-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-book-open"></i> My Classes</h2>
+        <button id="join-class-btn" class="btn-primary">
+          <i class="fas fa-plus"></i> Join Class
+        </button>
+      </div>
+
+      <div id="class-list" class="class-list">
+        <!-- Classes will be rendered here by JavaScript -->
+      </div>
+
+      <!-- Join Class Modal -->
+      <div id="join-class-modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Join a Class</h3>
+            <button id="cancel-join-class" class="close-btn"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="class-code-input">Class Code</label>
+              <input type="text" id="class-code-input" placeholder="Enter class code provided by your professor">
+              <small>The professor will provide you with the class code</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="join-class" class="btn-primary">Join Class</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class View -->
+    <div id="class-view" class="content-section hidden">
+      <div class="class-header">
+        <button id="back-to-classes" class="btn-back">
+          <i class="fas fa-arrow-left"></i> Back to Classes
+        </button>
+        <div class="class-info">
+          <h2 id="class-title"></h2>
+          <p id="class-desc"></p>
+          <div class="class-stats">
+            <span><i class="fas fa-user-tie"></i> <span id="class-professor">Professor</span></span>
+            <span><i class="fas fa-file-alt"></i> <span id="class-materials">0</span> Materials</span>
+            <span><i class="fas fa-tasks"></i> <span id="class-assignments">0</span> Assignments</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="class-tabs">
+        <button class="tab-btn active" data-tab="posts">Class Posts</button>
+        <button class="tab-btn" data-tab="assignments">Assignments</button>
+        <button class="tab-btn" data-tab="grades">My Grades</button>
+      </div>
+
+      <div class="tab-content active" id="posts-tab">
+        <div id="posts-container" class="posts-container"></div>
+      </div>
+
+      <div class="tab-content" id="assignments-tab">
+        <div id="assignments-container" class="assignments-container"></div>
+      </div>
+
+      <div class="tab-content" id="grades-tab">
+        <div id="grades-container" class="grades-container"></div>
+      </div>
+    </div>
+
+    <!-- ✅ FIX #3: Assignments Section (separate search) -->
+    <div id="assignments-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-tasks"></i> Assignments</h2>
+        <div class="header-actions">
+          <select id="assignment-filter">
+            <option value="all">All Assignments</option>
+            <option value="pending">Pending</option>
+            <option value="submitted">Submitted</option>
+            <option value="graded">Graded</option>
+          </select>
+        </div>
+      </div>
+      <div id="assignments-list" class="assignments-list">
+        <!-- Assignments will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Grades Section -->
+    <div id="grades-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-chart-line"></i> Grades</h2>
+        <div class="header-actions">
+          <select id="grade-filter">
+            <option value="all">All Classes</option>
+          </select>
+        </div>
+      </div>
+      <div class="grades-overview">
+        <div class="grade-summary">
+          <div class="grade-stat">
+            <h3 id="overall-grade">0.00</h3>
+            <p>General Weighted Average (GWA)</p>
+          </div>
+          <div class="grade-stat">
+            <h3 id="completed-assignments-count">0</h3>
+            <p>Completed</p>
+          </div>
+          <div class="grade-stat">
+            <h3 id="pending-assignments-count">0</h3>
+            <p>Pending</p>
+          </div>
+        </div>
+        <div id="grades-details" class="grades-details">
+          <!-- Grades will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ NEW: Missed Tasks Section -->
+    <div id="missed-tasks-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-exclamation-triangle"></i> Missed Tasks</h2>
+        <div class="header-actions">
+          <button class="btn-secondary" onclick="loadMissedTasks()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+      </div>
+      
+      <div class="missed-tasks-info" style="background: #fff3cd; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border-left: 4px solid #ffc107;">
+        <h3 style="margin: 0 0 0.5rem 0; color: #856404;">
+          <i class="fas fa-info-circle"></i> About Missed Tasks
+        </h3>
+        <p style="margin: 0; color: #856404; line-height: 1.6;">
+          This section shows assignments that have passed their due date without submission. 
+          Contact your professor as soon as possible to discuss late submissions or extensions.
+        </p>
+      </div>
+      
+      <div id="missed-tasks-list" class="missed-tasks-list">
+        <!-- Missed tasks will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- ✅ FIX #2 & #4: Settings with Password Change -->
+    <div id="settings-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-cog"></i> Settings</h2>
+      </div>
+      <div class="settings-content">
+        <div class="settings-tabs">
+          <button class="settings-tab active" data-tab="account">Account</button>
+          <button class="settings-tab" data-tab="privacy">Privacy</button>
+        </div>
+        
+        <!-- Account Settings -->
+        <div class="settings-panel active" id="account-settings">
+          <h3>Account Settings</h3>
+          
+          <div class="settings-section">
+            <h4>Change Password</h4>
+            <div class="password-form">
+              <div class="form-group">
+                <label for="settings-current-password">Current Password</label>
+                <input type="password" id="settings-current-password" placeholder="Enter current password">
+              </div>
+              <div class="form-group">
+                <label for="settings-new-password">New Password</label>
+                <input type="password" id="settings-new-password" placeholder="Enter new password">
+                <small class="password-hint">Password must be at least 8 characters with uppercase, lowercase, numbers, and special characters</small>
+              </div>
+              <div class="form-group">
+                <label for="settings-confirm-password">Confirm New Password</label>
+                <input type="password" id="settings-confirm-password" placeholder="Confirm new password">
+              </div>
+              <button id="settings-update-password" class="btn-primary">Update Password</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Notification Settings -->
+        <div class="settings-panel" id="notification-settings">
+          <h3>Notification Preferences</h3>
+          <p style="margin-bottom: 1.5rem; color: #666;">Control how and when you receive notifications</p>
+          
+          <div class="settings-section">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Assignment Notifications</h4>
+                <p>Get notified when new assignments are posted</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif-assignments" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Grade Notifications</h4>
+                <p>Get notified when assignments are graded</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif-grades" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Material Uploads</h4>
+                <p>Get notified when new materials are posted</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif-materials" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Deadline Reminders</h4>
+                <p>Get notified about upcoming assignment deadlines</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notif-deadlines" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <button id="save-notification-settings" class="btn-primary" style="margin-top: 1.5rem;">Save Notification Settings</button>
+          </div>
+        </div>
+        
+        <!-- Privacy Settings -->
+        <div class="settings-panel" id="privacy-settings">
+          <h3>Privacy & Data</h3>
+          <p style="margin-bottom: 1.5rem; color: #666;">Manage your privacy and data settings</p>
+          
+          <div class="settings-section">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Profile Visibility</h4>
+                <p>Allow other students to see your profile</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privacy-profile" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Show Email</h4>
+                <p>Display your email in class rosters</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privacy-email">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <button id="save-privacy-settings" class="btn-primary" style="margin-top: 1.5rem;">Save Privacy Settings</button>
+            
+            <div class="danger-zone" style="margin-top: 3rem; padding: 1.5rem; border: 2px solid #dc3545; border-radius: 8px; background: #fff5f5;">
+              <h4 style="color: #dc3545; margin-bottom: 1rem;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h4>
+              <p style="margin-bottom: 1rem; color: #666;">Clear all your data from LearnSync</p>
+              <button id="clear-all-data" class="btn-danger">Clear All My Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assignment Submission Modal -->
+    <div id="submission-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Submit Assignment</h3>
+          <button class="close-btn" id="close-submission-modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="submission-text">Submission Text</label>
+            <textarea id="submission-text" placeholder="Enter your submission..." rows="6"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Attach Files (Optional)</label>
+            <div class="file-upload">
+              <label for="submission-files" class="custom-file-label">
+                <i class="fas fa-cloud-upload-alt"></i> Choose Files
+              </label>
+              <input type="file" id="submission-files" multiple hidden>
+              <span id="submission-files-chosen">No files selected</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="submit-assignment" class="btn-primary">Submit Assignment</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Update dynamic elements with student data
+    document.addEventListener('DOMContentLoaded', function() {
+      const welcomeTitle = document.querySelector('.welcome h1');
+      if (welcomeTitle) {
+        welcomeTitle.textContent = `Welcome Back, {{ user.first_name }}!`;
+      }
+      
+      const profileName = document.querySelector('.profile-name');
+      if (profileName) {
+        profileName.textContent = `{{ user.first_name }} {{ user.last_name }}`;
+      }
+      
+      const profileSectionName = document.querySelector('.profile-avatar-section h3');
+      if (profileSectionName) {
+        profileSectionName.textContent = `{{ user.first_name }} {{ user.last_name }}`;
+      }
+      
+      const profileCourse = document.querySelector('.profile-avatar-section p');
+      if (profileCourse) {
+        profileCourse.textContent = `Student - {{ user.course }}`;
+      }
+    });
+  </script>
+
+  <script src="/static/js/student-script.js"></script>
+</body>
+</html>

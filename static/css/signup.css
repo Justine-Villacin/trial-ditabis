@@ -1,0 +1,219 @@
+/* GLOBAL RESET AND BODY STYLES */
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    /* Background for the whole page */
+    background-image: url('../images/COENG.png'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* --- CONTAINER STYLES (Applies to both Login and Signup) --- */
+
+.login-container, 
+.signup-container {
+    /* Shared translucent, frosted glass effect */
+    background: rgba(93, 136, 165, 0.6);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    width: 450px; /* Consistent width for both */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white; /* Default text color inside container */
+    transition: all 0.3s ease; /* For hover effect */
+}
+
+.login-container:hover,
+.signup-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
+.login-container h1, 
+.signup-container h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    color: black; /* Heading color */
+}
+
+/* --- TOGGLE BUTTONS (For switching between Login/Signup views) --- */
+
+.toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.toggle button {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #fff;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    background-color: transparent;
+    color: white;
+    transition: 0.3s;
+}
+
+.toggle button.active {
+    background-color: #006fd0; /* Primary Blue for active tab */
+    border: none;
+    color: white;
+}
+
+/* --- INPUT FIELD STYLES (Shared across containers) --- */
+
+.input-group {
+    position: relative;
+    margin: 12px 0;
+}
+
+/* General input styling for full-width fields */
+.input-group input {
+    width: 83%; /* This maintains the original width calculation */
+    padding: 12px 40px 12px 40px;
+    border: none;
+    border-radius: 10px;
+    background-color: #223047; /* Darker input background */
+    color: white;
+    font-size: 14px;
+}
+
+.input-group input::placeholder {
+    color: #cfd6de;
+}
+
+.input-group .icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+.input-group .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* --- SIGNUP-SPECIFIC FIELD STYLES --- */
+
+.name-fields {
+    display: flex;
+    gap: 10px;
+}
+
+/* Input styling specifically for the first/last name fields */
+.name-fields .input-group input {
+    /* Since .name-fields has a flex layout, you need to adjust widths based on that. 
+       If you want them to be equal width, set width: 100% inside the flex item. 
+       The original width: 65% is kept, but its calculation might be tricky 
+       in a flex container if not adjusted relative to the .input-group width. */
+    width: 100%; 
+}
+
+.name-fields .input-group {
+    flex: 1; /* Makes both name input groups take up equal space */
+}
+
+
+/* --- CHECKBOX --- */
+
+.checkbox-group {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: white;
+}
+
+.checkbox-group input {
+    /* Resets the specific input padding for the checkbox */
+    width: auto; 
+    padding: 0;
+    background-color: transparent; 
+    margin-right: 8px;
+}
+
+/* --- BUTTON STYLES (Login and Signup) --- */
+
+/* Reusing the .signup-btn class name, but apply it to the main button in both forms 
+   (e.g., use class="main-btn" or similar in your HTML for both to share the style) */
+.main-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff7f4d; /* Orange accent color */
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 15px 0;
+    transition: 0.3s;
+}
+
+.main-btn:hover {
+    background-color: #e66f3c;
+}
+
+/* Applying the style to the original class name for consistency */
+.signup-btn {
+    /* Inherits main-btn styles if you rename, otherwise use the original: */
+    width: 100%;
+    padding: 12px;
+    background-color: #ff7f4d; 
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 15px 0;
+    transition: 0.3s;
+}
+
+.signup-btn:hover {
+    background-color: #e66f3c;
+}
+
+/* --- REDIRECT LINK (Shared for Login/Signup link at the bottom) --- */
+
+.redirect-link {
+    text-align: center;
+    font-size: 13px;
+    color: black;
+}
+
+.redirect-link a {
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
+}
+
+/* Apply original styles to the new, more semantic class */
+.login {
+    text-align: center;
+    font-size: 13px;
+    color: black;
+}
+
+.login a {
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
+}

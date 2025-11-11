@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnSync - University of Caloocan City</title>
+  <link rel="stylesheet" href="static/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">
+      <img src="static/images/LMS-logo.png" alt="LearnSync Logo">
+      <span>LEARNSYNC</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#courses">PROGRAMS</a>
+      <a href="#about">ABOUT</a>
+      <a href="#developers">DEVELOPERS</a>
+      <a href="#contact">CONTACT</a>
+      <button class="login-btn" onclick="handleLogin()">LOG IN</button>
+      
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>UNIVERSITY OF CALOOCAN CITY</h1>
+      <h2>COLLEGE OF ENGINEERING</h2>
+      <h3>LEARNING MANAGEMENT SYSTEM (LMS)</h3>
+    </div>
+  </section>
+
+  <section id="courses" class="courses">
+    <h2>Programs Offered</h2>
+    <div class="underline"></div>
+    
+    <div class="carousel">
+      <div class="card position-1">
+        <button class="course-btn">BS CPE</button>
+        <p>COMPUTER<br>ENGINEERING</p>
+        <div class="course-description">Focuses on designing and developing computer systems, hardware, and software. It combines computer science and electrical engineering to create innovative computing solutions.</div>
+      </div>
+      <div class="card position-2">
+        <button class="course-btn">BS EE</button>
+        <p>ELECTRICAL<br>ENGINEERING</p>
+        <div class="course-description">Deals with the study and application of electricity, electronics, and electromagnetism. It involves designing and maintaining electrical systems and power generation equipment.</div>
+      </div>
+      <div class="card position-3">
+        <button class="course-btn">BS ECE</button>
+        <p>ELECTRONICS<br>ENGINEERING</p>
+        <div class="course-description">Specializes in electronic devices, circuits, and communication systems. It prepares students to work with technologies like telecommunications, embedded systems, and automation.</div>
+      </div>
+      <div class="card position-4">
+        <button class="course-btn">BS IE</button>
+        <p>INDUSTRIAL<br>ENGINEERING</p>
+        <div class="course-description">Focuses on improving systems, processes, and efficiency in industries. It combines engineering, management, and optimization to enhance productivity and quality.</div>
+      </div>
+      <button class="carousel-btn carousel-prev">&#8678;</button>
+      <button class="carousel-btn carousel-next">&#8680;</button>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h3><span class="circle">Q</span>LEARNSYNC</h3>
+    <p class="about-description">
+      LearnSync is a comprehensive Learning Management System (LMS) developed specifically for the University of Caloocan City. It is designed to simplify, centralize, and modernize the way learning takes place in both online and face-to-face settings. The system provides a seamless digital environment where instructors and students can connect, collaborate, and manage coursework with ease.
+      <br><br>
+      With LearnSync, instructors can upload lessons, organize course materials, manage attendance, monitor student progress, and assess performance through an intuitive dashboard. The platform makes teaching more efficient by automating repetitive tasks and providing real-time analytics that help teachers focus more on guiding their students rather than managing paperwork.
+      <br><br>
+      For students, LearnSync offers a smooth and engaging experience. Learners can access uploaded materials, review lessons anytime, submit assignments, take quizzes, and track their academic progress, all from one unified portal. This encourages independence, continuous learning, and better academic performance through accessible and well-structured resources.
+      <br><br>
+      Beyond its functionality, LearnSync represents a commitment to bridging technology and education. Developed by Computer Engineering students, the system was built with a vision of creating a synchronized and user-friendly learning environment that meets the evolving needs of both educators and learners. It embodies innovation, teamwork, and the spirit of progress, aiming to make academic management more efficient, transparent, and inclusive for everyone.
+      <br><br>
+      By integrating key features such as user authentication, course management, data tracking, and responsive design, LearnSync ensures that every user enjoys a consistent and optimized experience across all devices. Whether accessed through a laptop, tablet, or phone, the platform maintains its clean interface and functionality, making education accessible anytime and anywhere.
+      <br><br>
+      Ultimately, LearnSync is more than just a tool, it’s a digital bridge that connects students and educators in a shared mission of growth, collaboration, and learning without limits.
+    </p>
+  </section>
+
+  <section id="developers" class="developers">
+    <h2>Meet Our Team</h2>
+    <div class="underline"></div>
+    <div class="team-container">
+      <div class="team-member">
+        <div class="member-img">
+          <img src="static/images/Asugas.jpg" alt="Developer 1">
+        </div>
+        <h3>Kenneth Asugas</h3>
+        <p>Frontend Developer</p>
+        <div class="member-description">
+          Responsible for the system’s visual design and interactivity, ensuring an intuitive and responsive interface that provides seamless user experiences across all devices.
+        </div>
+      </div>
+      <div class="team-member">
+        <div class="member-img">
+          <img src="static/images/Regondola.jpg" alt="Developer 2">
+        </div>
+        <h3>Jezreel Regondola</h3>
+        <p>Backend Developer</p>
+        <div class="member-description">
+          Manages the backend logic, database, and system performance, ensuring LearnSync runs efficiently and securely behind the scenes.
+        </div>
+      </div>
+      <div class="team-member">
+        <div class="member-img">
+          <img src="static/images/Ruperto.jpg" alt="Developer 3">
+        </div>
+        <h3>April Anne Ruperto</h3>
+        <p>UI/UX Designer</p>
+        <div class="member-description">
+          Focuses on the platform’s visual appeal and user experience, maintaining a clear and consistent design flow for smooth navigation and usability.
+        </div>
+      </div>
+      <div class="team-member">
+        <div class="member-img">
+          <img src="static/images/Villacin.jpg" alt="Developer 4">
+        </div>
+        <h3>Justine Villacin</h3>
+        <p>Full Stack Developer</p>
+        <div class="member-description">
+          Ensures smooth integration between the frontend and backend components, bridging the system’s design and functionality for a cohesive experience.
+        </div>
+      </div>
+      <div class="team-member">
+        <div class="member-img">
+          <img src="static/images/Villanueva.jpg" alt="Developer 5">
+        </div>
+        <h3>Bryan Villanueva</h3>
+        <p>Team Leader</p>
+        <div class="member-description">
+          Overssees the project’s development while contributing to both design and system functionality, guiding the team toward achieving a unified and efficient platform.
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <div class="underline"></div>
+    <div class="contact-container">
+      <div class="contact-info">
+        <h3>Get in Touch</h3>
+        <p>Have questions or feedback? We'd love to hear from you!</p>
+        <div class="contact-details">
+          <div class="contact-item">
+            <strong>Email:</strong> learnsynclms@gmail.com
+          </div>
+          <div class="contact-item">
+            <strong>Phone:</strong> +63 9152966932
+          </div>
+          <div class="contact-item">
+            <strong>Address:</strong> University of Caloocan City, College of Engineering
+          </div>
+        </div>
+      </div>
+</section>
+      <!--
+      <div class="contact-form">
+         ✅ ADDED: Action and method for form submission 
+        <form method="POST" action="/contact" id="contactForm">
+          <input type="text" name="name" placeholder="Your Name" required>
+          <input type="email" name="email" placeholder="Your Email" required>
+          <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+         ✅ ADDED: Success/Error message display 
+        <div id="contactMessage" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 5px;"></div>
+      </div>
+    </div>
+  </section>
+-->
+  
+  <footer>
+    <div class="footer-container">
+      <img src="static/images/UCC.png" alt="UCC Logo" class="footer-logo">
+      <div class="footer-links">
+        </div>
+      <img src="static/images/COE.png" alt="COE Logo" class="footer-logo">
+    </div>
+  </footer>
+</body>
+<script src="/static/js/script.js"></script>
+</html>

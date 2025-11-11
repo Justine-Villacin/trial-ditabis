@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Login - LearnSync</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+   <style>
+      * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+      }
+
+      body {
+         font-family: 'Inter', sans-serif;
+         background: linear-gradient(135deg, #1a2332 0%, #2d3748 100%);
+         min-height: 100vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         position: relative;
+         padding: 20px;
+      }
+
+      /* Subtle animated background pattern */
+      body::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         background-image: 
+            radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+         pointer-events: none;
+      }
+
+      /* Back to home button */
+      .back-to-home {
+         position: fixed;
+         top: 24px;
+         left: 24px;
+         display: inline-flex;
+         align-items: center;
+         gap: 8px;
+         padding: 12px 20px;
+         background: rgba(255, 255, 255, 0.1);
+         backdrop-filter: blur(10px);
+         color: white;
+         text-decoration: none;
+         border-radius: 10px;
+         font-weight: 500;
+         font-size: 14px;
+         transition: all 0.3s ease;
+         z-index: 1000;
+         border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .back-to-home:hover {
+         background: rgba(59, 130, 246, 0.2);
+         transform: translateX(-4px);
+         border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .back-to-home i {
+         font-size: 14px;
+      }
+
+      /* Login Container */
+      .login-container {
+         background: white;
+         padding: 48px 40px;
+         border-radius: 16px;
+         box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+         width: 100%;
+         max-width: 440px;
+         position: relative;
+         z-index: 1;
+      }
+
+      /* Logo/Title */
+      h1 {
+         color: #1a2332;
+         margin-bottom: 8px;
+         font-size: 32px;
+         font-weight: 700;
+         font-family: 'Poppins', sans-serif;
+         text-align: center;
+         letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+         text-align: center;
+         color: #64748b;
+         font-size: 14px;
+         margin-bottom: 32px;
+         font-weight: 400;
+      }
+
+      /* Flash Messages */
+      .flash-messages {
+         margin-bottom: 24px;
+      }
+
+      .flash-message {
+         background: #fee2e2;
+         color: #dc2626;
+         padding: 14px 16px;
+         border-radius: 10px;
+         margin-bottom: 12px;
+         border-left: 4px solid #dc2626;
+         font-size: 14px;
+         display: flex;
+         align-items: center;
+         gap: 10px;
+         animation: slideIn 0.3s ease;
+      }
+
+      .flash-message::before {
+         content: '\f06a';
+         font-family: 'Font Awesome 6 Free';
+         font-weight: 900;
+         font-size: 16px;
+      }
+
+        /* ✅ ADD: Success message styling */
+      .flash-message.success {
+         background: #d4edda;
+         color: #155724;
+         border-left-color: #28a745;
+      }
+
+      .flash-message.success::before {
+         content: '\f058'; /* fa-check-circle */
+         color: #28a745;
+      }
+      
+      /* Keep existing error styling */
+      .flash-message {
+         background: #fee2e2;
+         color: #dc2626;
+         border-left: 4px solid #dc2626;
+      }
+
+      @keyframes slideIn {
+         from {
+            opacity: 0;
+            transform: translateY(-10px);
+         }
+         to {
+            opacity: 1;
+            transform: translateY(0);
+         }
+      }
+
+      /* Toggle Buttons - REMOVED */
+      /* This section has been removed as toggle is no longer needed */
+
+      /* User Type Selection */
+      .user-type-selection {
+         margin-bottom: 28px;
+      }
+
+      .user-type-selection > label {
+         display: block;
+         margin-bottom: 12px;
+         color: #334155;
+         font-weight: 600;
+         font-size: 14px;
+      }
+
+      .radio-group {
+         display: grid;
+         grid-template-columns: 1fr 1fr;
+         gap: 12px;
+      }
+
+      .radio-group input[type="radio"] {
+         display: none;
+      }
+
+      .radio-group label {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         gap: 8px;
+         padding: 14px 16px;
+         border: 2px solid #e2e8f0;
+         background: white;
+         color: #64748b;
+         border-radius: 10px;
+         cursor: pointer;
+         font-weight: 500;
+         font-size: 14px;
+         transition: all 0.2s ease;
+         margin: 0;
+      }
+
+      .radio-group label i {
+         font-size: 18px;
+      }
+
+      .radio-group input[type="radio"]:checked + label {
+         background: #eff6ff;
+         border-color: #3b82f6;
+         color: #3b82f6;
+         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .radio-group label:hover {
+         border-color: #3b82f6;
+         background: #f8fafc;
+      }
+
+      /* Input Groups */
+      .input-group {
+         position: relative;
+         margin-bottom: 20px;
+      }
+
+      .input-group .icon {
+         position: absolute;
+         left: 16px;
+         top: 50%;
+         transform: translateY(-50%);
+         color: #94a3b8;
+         font-size: 16px;
+         transition: all 0.2s ease;
+         z-index: 1;
+      }
+
+      .input-group input,
+      .input-group select {
+         width: 100%;
+         padding: 14px 16px 14px 48px;
+         border: 2px solid #e2e8f0;
+         border-radius: 10px;
+         font-size: 15px;
+         transition: all 0.2s ease;
+         background: white;
+         color: #1e293b;
+         font-family: 'Inter', sans-serif;
+      }
+
+      .input-group input::placeholder {
+         color: #94a3b8;
+      }
+
+      .input-group input:focus,
+      .input-group select:focus {
+         outline: none;
+         border-color: #3b82f6;
+         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .input-group input:focus + .icon,
+      .input-group:focus-within .icon {
+         color: #3b82f6;
+      }
+
+      /* Options (Remember me & Forgot password) */
+      .options {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 24px;
+         font-size: 14px;
+      }
+
+      .options label {
+         display: flex;
+         align-items: center;
+         gap: 8px;
+         color: #475569;
+         cursor: pointer;
+         font-weight: 500;
+      }
+
+      .options input[type="checkbox"] {
+         width: 18px;
+         height: 18px;
+         accent-color: #3b82f6;
+         cursor: pointer;
+      }
+
+      .options a {
+         color: #3b82f6;
+         text-decoration: none;
+         font-weight: 600;
+         transition: all 0.2s ease;
+      }
+
+      .options a:hover {
+         color: #2563eb;
+         text-decoration: underline;
+      }
+
+      /* Login Button */
+      .login-btn {
+         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+         color: white;
+         border: none;
+         padding: 16px;
+         border-radius: 10px;
+         cursor: pointer;
+         font-size: 16px;
+         width: 100%;
+         transition: all 0.3s ease;
+         font-weight: 600;
+         letter-spacing: 0.3px;
+         position: relative;
+         overflow: hidden;
+         box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+         font-family: 'Inter', sans-serif;
+         margin-bottom: 20px;
+      }
+
+      .login-btn:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+      }
+
+      .login-btn:active {
+         transform: translateY(0);
+      }
+
+      .login-btn::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: -100%;
+         width: 100%;
+         height: 100%;
+         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+         transition: left 0.5s ease;
+      }
+
+      .login-btn:hover::before {
+         left: 100%;
+      }
+
+      /* Sign Up Redirect */
+      .signup-redirect {
+         text-align: center;
+         font-size: 14px;
+         color: #64748b;
+         font-weight: 500;
+      }
+
+      .signup-redirect a {
+         color: #3b82f6;
+         text-decoration: none;
+         font-weight: 600;
+         transition: all 0.2s ease;
+      }
+
+      .signup-redirect a:hover {
+         color: #2563eb;
+         text-decoration: underline;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 480px) {
+         .login-container {
+            padding: 36px 24px;
+         }
+
+         h1 {
+            font-size: 28px;
+         }
+
+         .back-to-home {
+            top: 16px;
+            left: 16px;
+            padding: 10px 16px;
+            font-size: 13px;
+         }
+
+         .radio-group {
+            grid-template-columns: 1fr;
+         }
+      }
+
+      /* Loading State */
+      .login-btn.loading {
+         pointer-events: none;
+         opacity: 0.7;
+      }
+
+      .login-btn.loading::after {
+         content: '';
+         position: absolute;
+         width: 16px;
+         height: 16px;
+         top: 50%;
+         left: 50%;
+         margin-left: -8px;
+         margin-top: -8px;
+         border: 2px solid rgba(255, 255, 255, 0.3);
+         border-top-color: white;
+         border-radius: 50%;
+         animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+         to { transform: rotate(360deg); }
+      }
+   </style>
+</head>
+<body>
+   <a href="/" class="back-to-home">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Home</span>
+   </a>
+
+   <div class="login-container">
+      <h1>LearnSync</h1>
+      <p class="subtitle">Welcome back! Please login to your account.</p>
+
+      <!-- Flash Messages -->
+      <div class="flash-messages">
+         {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                  {% for category, message in messages %}
+                     <div class="flash-message {{ category }}">
+                        {{ message }}
+                     </div>
+                  {% endfor %}
+            {% endif %}
+         {% endwith %}
+      </div>
+
+      <div class="user-type-selection">
+         <label>Select Account Type</label>
+         <div class="radio-group">
+            <input type="radio" id="student" name="userType" value="student" checked>
+            <label for="student">
+               <i class="fas fa-user-graduate"></i>
+               Student
+            </label>
+            <input type="radio" id="professor" name="userType" value="professor">
+            <label for="professor">
+               <i class="fas fa-chalkboard-teacher"></i>
+               Professor
+            </label>
+         </div>
+      </div>
+
+      <form method="POST" action="/login" id="loginForm">
+         <input type="hidden" name="userType" id="userTypeInput" value="student">
+         
+         <div class="input-group">
+            <i class="icon fas fa-envelope"></i>
+            <input type="email" id="email" name="email" placeholder="Email address" required>
+         </div>
+         <div class="input-group" style="position: relative;">
+         <i class="icon fas fa-lock"></i>
+         <input type="password" id="password" name="password" placeholder="Password" required>
+         <button type="button" 
+                  onclick="togglePasswordVisibility('password', this)" 
+                  style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; z-index: 2;">
+            <i class="fas fa-eye"></i>
+         </button>
+         </div>
+
+         <div class="options">
+            <label>
+               <input type="checkbox" name="remember">
+               Remember me
+            </label>
+            <a href="/forgot-password" id="forgotLink">Forgot Password?</a>
+         </div>
+
+         <button class="login-btn" type="submit">Log In</button>
+         
+         <div class="signup-redirect">
+            Don't have an account? <a href="/signup">Sign Up</a>
+         </div>
+      </form>
+   </div>
+
+   <script>
+      document.addEventListener('DOMContentLoaded', function() {
+         const studentRadio = document.getElementById('student');
+         const professorRadio = document.getElementById('professor');
+         const userTypeInput = document.getElementById('userTypeInput');
+         const loginForm = document.getElementById('loginForm');
+         const loginBtn = loginForm.querySelector('.login-btn');
+
+         function updateUserType() {
+            userTypeInput.value = studentRadio.checked ? 'student' : 'professor';
+         }
+
+         studentRadio.addEventListener('change', updateUserType);
+         professorRadio.addEventListener('change', updateUserType);
+
+         // Optional: Add loading state on submit
+         loginForm.addEventListener('submit', function() {
+            loginBtn.classList.add('loading');
+            loginBtn.textContent = '';
+         });
+      });
+function togglePasswordVisibility(inputId, button) {
+  const input = document.getElementById(inputId);
+  const icon = button.querySelector('i');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fas fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fas fa-eye';
+  }
+}
+   </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Identity - LearnSync</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .security-notice {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .security-notice i {
+            color: #3b82f6;
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .security-notice-content {
+            flex: 1;
+        }
+        
+        .security-notice-content h4 {
+            color: #1e40af;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .security-notice-content p {
+            color: #3b82f6;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Login Button -->
+    <a href="{{ url_for('login') }}" class="back-to-home">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Login</span>
+    </a>
+
+    <!-- Verify Identity Container -->
+    <div class="login-container">
+        <h1>Verify Your Identity</h1>
+        <p class="subtitle">Confirm your details to proceed with password reset.</p>
+        
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Security Notice -->
+        <div class="security-notice">
+            <i class="fas fa-shield-alt"></i>
+            <div class="security-notice-content">
+                <h4>Security Verification Required</h4>
+                <p>Please provide the following information to verify your identity and proceed with the password reset.</p>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('verify_identity', token=token) }}" id="verifyIdentityForm">
+            <!-- First Name -->
+            <div class="input-group">
+                <i class="icon fas fa-user"></i>
+                <input type="text" name="first_name" placeholder="First Name" required>
+            </div>
+
+            <!-- Last Name -->
+            <div class="input-group">
+                <i class="icon fas fa-user"></i>
+                <input type="text" name="last_name" placeholder="Last Name" required>
+            </div>
+
+            <!-- Student or Professor ID -->
+            {% if user_type == 'student' %}
+            <div class="input-group">
+                <i class="icon fas fa-id-card"></i>
+                <input type="text" name="student_id" placeholder="Student ID" required>
+            </div>
+            {% else %}
+            <div class="input-group">
+                <i class="icon fas fa-id-badge"></i>
+                <input type="text" name="professor_id" placeholder="Professor ID" required>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="login-btn">Verify Identity</button>
+            
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add loading state on submit
+        document.getElementById('verifyIdentityForm').addEventListener('submit', function() {
+            const btn = this.querySelector('.login-btn');
+            btn.classList.add('loading');
+            btn.textContent = '';
+        });
+    </script>
+</body>
+</html>

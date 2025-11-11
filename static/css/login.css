@@ -1,0 +1,542 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Background changed to solid Primary Dark Blue color */
+    font-family: 'Poppins', sans-serif;
+    background-color: #1e4b6d; /* Primary Dark Blue */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Background image and overlay removed */
+body::before {
+    display: none;
+}
+
+/* Merged Container Styles: Ensures login and signup look identical */
+.login-container, .signup-container {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    
+    width: 90%; 
+    max-width: 400px; 
+    margin: 20px; 
+    
+    text-align: center;
+    backdrop-filter: blur(5px);
+    /* Border matching secondary blue (#1b5b8b) */
+    border: 1px solid rgba(27, 91, 139, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Hover animation for both containers */
+.login-container:hover, .signup-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    /* Secondary blue color (#1b5b8b) and Orbitron font */
+    color: #1b5b8b;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    font-weight: bold;
+    font-family: 'orbitron', sans-serif;
+}
+
+/* Updated: Toggle buttons (Log In / Sign Up) - This group now only contains the Log In button for the form */
+.toggle {
+    display: flex;
+    justify-content: center; 
+    gap: 15px;
+    /* Reduced margin-bottom since the main login button is still inside, 
+       but the main Sign Up button will be separate. 
+       If you only use this for a navigation tab, this is fine. */
+    margin-bottom: 30px; 
+}
+
+.toggle button {
+    flex: 0 1 150px;
+    padding: 10px 20px;
+    border: 2px solid #1b5b8b; 
+    background: transparent;
+    color: #1b5b8b;
+    border-radius: 25px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.toggle button.active {
+    background: #1b5b8b; /* Secondary Blue for active */
+    border-color: #1b5b8b;
+    color: white;
+    /* Blue shadow */
+    box-shadow: 0 4px 15px rgba(27, 91, 139, 0.4); 
+    transform: translateY(-2px);
+}
+
+.toggle button:hover {
+    background: rgba(27, 91, 139, 0.1); 
+    color: #1b5b8b; /* Secondary Blue on hover */
+    border-color: #1b5b8b;
+    transform: translateY(-2px);
+}
+
+.toggle button.active:hover {
+    background: #1e4b6d; /* Primary Dark Blue on active hover */
+    /* Darker Blue shadow */
+    box-shadow: 0 6px 20px rgba(30, 75, 109, 0.5); 
+    color: white;
+}
+
+/* Aesthetic buttons for Student/Professor (replaces radio group) */
+.user-type-selection {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.user-type-selection label {
+    display: block;
+    margin-bottom: 12px;
+    color: #333;
+    font-weight: 500;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Hide the actual radio input */
+.radio-group input[type="radio"] {
+    display: none; 
+}
+
+/* Style for the button-like labels (Professor/Student) */
+.radio-group label {
+    display: inline-block;
+    flex: 1;
+    max-width: 150px;
+    margin: 0; 
+    
+    padding: 12px 15px;
+    border: 2px solid #1b5b8b; /* Secondary Blue Outline */
+    background: transparent;
+    color: #1b5b8b;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Active state when radio is checked */
+.radio-group input[type="radio"]:checked + label {
+    background: #1b5b8b; /* Secondary Blue */
+    border-color: #1b5b8b;
+    color: white;
+    /* Blue shadow */
+    box-shadow: 0 4px 10px rgba(27, 91, 139, 0.4); 
+    transform: translateY(-2px);
+}
+
+/* Hover effect */
+.radio-group label:hover {
+    border-color: #1b5b8b;
+    color: #1b5b8b;
+    transform: translateY(-2px);
+}
+
+/* Checked and Hover effect */
+.radio-group input[type="radio"]:checked + label:hover {
+    background: #1e4b6d; /* Primary Dark Blue */
+    color: white;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.input-group .icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.input-group:hover .icon {
+    color: #1b5b8b; /* Secondary Blue */
+    transform: translateY(-50%) scale(1.1);
+}
+
+.input-group:hover input, 
+.input-group:hover select {
+    border-color: #1b5b8b; /* Secondary Blue */
+    transform: translateY(-2px);
+}
+
+.input-group input:focus, .input-group select:focus {
+    outline: none;
+    border-color: #1b5b8b; /* Secondary Blue */
+    /* Blue shadow */
+    box-shadow: 0 0 0 3px rgba(27, 91, 139, 0.2); 
+    transform: translateY(-2px);
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.9em;
+}
+
+.options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.options label:hover {
+    color: #1b5b8b; /* Secondary Blue */
+    transform: translateX(5px);
+}
+
+.options input[type="checkbox"] {
+    accent-color: #1b5b8b; /* Secondary Blue */
+    transition: all 0.3s ease;
+}
+
+.options input[type="checkbox"]:hover {
+    transform: scale(1.2);
+}
+
+.options a {
+    color: #1b5b8b; /* Secondary Blue */
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.options a:hover {
+    text-decoration: underline;
+    transform: translateY(-2px);
+    color: #1e4b6d; /* Primary Dark Blue */
+}
+
+/* --- ADJUSTED LOGIN BUTTON STYLE (REDUCED MARGIN) --- */
+.login-btn {
+    background: #1b5b8b; /* Secondary Blue */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    /* Blue shadow for consistency */
+    box-shadow: 0 4px 15px rgba(27, 91, 139, 0.3); 
+    /* CHANGED: Reduced margin to tighten the button stack */
+    margin-bottom: 10px; 
+}
+
+.login-btn:hover {
+    background: #1e4b6d; /* Primary Dark Blue */
+    transform: translateY(-3px);
+    /* Dark Blue shadow */
+    box-shadow: 0 8px 20px rgba(30, 75, 109, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Ripple effect for button */
+.login-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.login-btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* --- NEW SIGN UP BUTTON (LOOKS IDENTICAL TO LOGIN) --- */
+/* This new class should be applied to the Sign Up button/link in your HTML. */
+.signup-btn-as-primary {
+    /* Inherit all styles from .login-btn visually */
+    background: #1b5b8b; /* Secondary Blue */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(27, 91, 139, 0.3); 
+    /* Space it from the login button */
+    margin-top: 10px; 
+    margin-bottom: 20px; /* Space from elements below */
+    text-align: center;
+    display: block; /* Important if used on an <a> tag */
+}
+
+.signup-btn-as-primary:hover {
+    background: #1e4b6d; /* Primary Dark Blue */
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(30, 75, 109, 0.4);
+}
+
+.signup-btn-as-primary:active {
+    transform: translateY(-1px);
+}
+
+.signup-btn-as-primary::after {
+    /* Inherit ripple effect if needed (for an <a> tag you'd need JS) */
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.signup-btn-as-primary:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+
+/* --- END NEW SIGN UP BUTTON --- */
+
+/* The Sign Up Prompt section can be adjusted/removed depending on the new button use */
+.signup-prompt {
+    margin-top: 150px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.signup-prompt a {
+    color: #1b5b8b; /* Secondary Blue */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.signup-prompt a:hover {
+    text-decoration: underline;
+    color: #1e4b6d; /* Primary Dark Blue */
+}
+
+/* Optional: If you want the Sign Up link to look like a secondary button */
+/* HIDING THE OLD SECONDARY BUTTON STYLE */
+.signup-secondary-btn {
+    display: none; 
+}
+
+
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-message {
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+    border-left: 4px solid;
+}
+
+.flash-message.success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left-color: #10b981;
+}
+
+.flash-message.error {
+    background: #fee2e2;
+    color: #dc2626;
+    border-left-color: #dc2626;
+}
+
+.flash-message.info {
+    background: #dbeafe;
+    color: #1e40af;
+    border-left-color: #3b82f6;
+}
+
+.flash-message::before {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.flash-message.success::before {
+    content: '\f00c';
+}
+
+.flash-message.error::before {
+    content: '\f06a';
+}
+
+.flash-message.info::before {
+    content: '\f05a';
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.forgot-password-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.forgot-password-link a {
+    color: #1b5b8b; /* Secondary Blue */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
+}
+
+/* Reset password page specific */
+.password-requirements {
+    font-size: 0.8em;
+    color: #666;
+    text-align: left;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    /* Secondary blue for border (#1b5b8b) */
+    border-left: 3px solid #1b5b8b;
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 450px) {
+    .login-container, .signup-container {
+        padding: 30px 20px; 
+        margin: 10px; 
+        width: 95%; 
+    }
+
+    h1 {
+        font-size: 2em; 
+    }
+
+    .radio-group label {
+        max-width: none;
+        padding: 10px 10px;
+    }
+}
+
+/* ✅ ADD: Back to home button styles */
+.back-to-home {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background:#1b5b8b;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-home:hover {
+  background: #1b5b8b;
+  transform: translateX(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-home i {
+  font-size: 1rem;
+}
+
