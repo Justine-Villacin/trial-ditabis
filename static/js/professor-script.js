@@ -25,6 +25,8 @@ if (!gradingModal) {
     console.error('Grading modal not found');
 }
 
+
+
 // ✅ Storage quota warning system
 function checkStorageQuota() {
     if (navigator.storage && navigator.storage.estimate) {
@@ -834,17 +836,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmPassword = document.getElementById('settings-confirm-password').value.trim();
     
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert('Please fill in all password fields');
+      showWarningToast('Please fill in all password fields');
       return;
     }
     
     if (newPassword.length < 8) {
-      alert('New password must be at least 8 characters');
+      showWarningToast('New password must be at least 8 characters');
       return;
     }
     
     if (newPassword !== confirmPassword) {
-      alert('New passwords do not match');
+      showWarningToast('New passwords do not match');
       return;
     }
     
@@ -864,15 +866,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const result = await response.json();
       
       if (response.ok) {
-        alert('Password updated successfully!');
+        showSuccessToast('Password updated successfully!');
         document.getElementById('settings-current-password').value = '';
         document.getElementById('settings-new-password').value = '';
         document.getElementById('settings-confirm-password').value = '';
       } else {
-        alert('âŒ ' + (result.error || 'Failed to update password'));
+        showErrorToast('âŒ ' + (result.error || 'Failed to update password'));
       }
     } catch (error) {
-      alert('âŒ Error updating password: ' + error.message);
+      showErrorToast('âŒ Error updating password: ' + error.message);
     } finally {
       this.disabled = false;
       this.innerHTML = 'Update Password';
@@ -891,7 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userType = document.body.classList.contains('professor-dashboard') ? 'professor' : 'student';
     localStorage.setItem(`${userType}_notification_settings`, JSON.stringify(settings));
     
-    alert('Notification settings saved!');
+    showSuccessToast('Notification settings saved!');
   });
   
   // Privacy settings
@@ -905,7 +907,7 @@ document.getElementById('save-privacy-settings')?.addEventListener('click', func
   localStorage.setItem(`${userType}_privacy_settings`, JSON.stringify(settings));
   
   //SHOW SUCCESS MESSAGE
-  alert('Privacy settings saved successfully!');
+  showSuccessToast('Privacy settings saved successfully!');
 });
 
 // Ã¢Å“â€¦ ADD: Clear all data function (around line 220)
@@ -927,7 +929,7 @@ document.getElementById('clear-all-data')?.addEventListener('click', function() 
       
       keysToRemove.forEach(key => localStorage.removeItem(key));
       
-      alert('Ã¢Å“â€¦ All data cleared successfully!\n\nThe page will now reload.');
+      showSuccessToast('All data cleared successfully!\n\nThe page will now reload.');
       window.location.reload();
     }
   }
@@ -1222,52 +1224,44 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Load classes from API
+// Update loadClasses function
 async function loadClasses() {
   try {
+    console.log('🔄 Loading classes from database...');
+    
     const response = await fetch('/api/professor/classes');
     if (response.ok) {
       classes = await response.json();
       
-      // ✅ FIX: Load materials, assignments, AND submissions for each class
-      for (let classItem of classes) {
-        if (!classItem.students) {
-          classItem.students = [];
-        }
-        
-        // Load materials from database
-        try {
-          const materialsResponse = await fetch(`/api/professor/classes/${classItem.id}/materials`);
-          if (materialsResponse.ok) {
-            classItem.materials = await materialsResponse.json();
-          } else {
-            classItem.materials = [];
-          }
-        } catch (e) {
-          console.error('Error loading materials for class:', classItem.id, e);
-          classItem.materials = [];
-        }
-        
-        // ✅ FIX: Load assignments WITH submissions from database
-        try {
-          const assignmentsResponse = await fetch(`/api/professor/classes/${classItem.id}/assignments`);
-          if (assignmentsResponse.ok) {
-            classItem.assignments = await assignmentsResponse.json();
-            console.log(`✅ Loaded ${classItem.assignments.length} assignments with submissions for ${classItem.name}`);
-          } else {
-            classItem.assignments = [];
-          }
-        } catch (e) {
-          console.error('Error loading assignments for class:', classItem.id, e);
-          classItem.assignments = [];
-        }
-      }
+      console.log(`✅ Loaded ${classes.length} classes from database`);
+      
+      // ✅ FIX: Initialize empty arrays for new classes
+      classes.forEach(classItem => {
+        if (!classItem.students) classItem.students = [];
+        if (!classItem.materials) classItem.materials = [];
+        if (!classItem.assignments) classItem.assignments = [];
+      });
       
       renderClassList();
       updateDashboardStats();
       loadAllStudents();
+    } else {
+      console.error('❌ Failed to load classes');
+      // Fallback to localStorage if API fails
+      const savedClasses = localStorage.getItem('professor_classes');
+      if (savedClasses) {
+        classes = JSON.parse(savedClasses);
+        renderClassList();
+      }
     }
   } catch (error) {
     console.error('Error loading classes:', error);
+    // Fallback to localStorage
+    const savedClasses = localStorage.getItem('professor_classes');
+    if (savedClasses) {
+      classes = JSON.parse(savedClasses);
+      renderClassList();
+    }
   }
 }
 
@@ -1307,7 +1301,7 @@ async function createClass() {
   const classCode = document.getElementById('class-code').value.trim();
   
   if (!className) {
-    alert('Please enter a class name');
+    showWarningToast('Please enter a class name');
     return;
   }
   
@@ -1327,7 +1321,7 @@ async function createClass() {
     const result = await response.json();
 
     if (response.ok) {
-      // ✅ FIX: Create completely fresh class object
+      // ✅ FIX: Create completely fresh class object with EMPTY arrays
       const newClass = {
         id: result.id,
         name: result.name,
@@ -1344,7 +1338,11 @@ async function createClass() {
       // ✅ FIX: Update localStorage without cross-contamination
       const savedClasses = localStorage.getItem('professor_classes');
       let localClasses = savedClasses ? JSON.parse(savedClasses) : [];
+      
+      // Remove any existing class with same ID to avoid duplicates
+      localClasses = localClasses.filter(c => c.id !== newClass.id);
       localClasses.push(newClass);
+      
       localStorage.setItem('professor_classes', JSON.stringify(localClasses));
       
       renderClassList();
@@ -1381,22 +1379,12 @@ function renderClassList() {
   );
   
   sortedClasses.forEach(classItem => {
-    // ✅ FIX: Force fresh data load from database
+    // ✅ FIX: Ensure fresh data calculation
     const studentCount = classItem.students ? classItem.students.length : 0;
-    
-    // ✅ FIX: Get materials count from database
-    let materialsCount = 0;
-    if (classItem.materials && Array.isArray(classItem.materials)) {
-      materialsCount = classItem.materials.length;
-    }
-    
-    // ✅ FIX: Get assignments count from database
-    let assignmentsCount = 0;
-    if (classItem.assignments && Array.isArray(classItem.assignments)) {
-      assignmentsCount = classItem.assignments.length;
-    }
-    
-    console.log(`📊 Class "${classItem.name}": ${studentCount} students, ${materialsCount} materials, ${assignmentsCount} assignments`);
+    const materialsCount = classItem.materials ? classItem.materials.length : 0;
+    const assignmentsCount = classItem.assignments ? classItem.assignments.length : 0;
+
+    console.log(`📊 Rendering Class "${classItem.name}": ${studentCount} students, ${materialsCount} materials, ${assignmentsCount} assignments`);
 
     const classCard = document.createElement('div');
     classCard.className = 'class-card';
@@ -1416,11 +1404,6 @@ function renderClassList() {
         <button class="btn-secondary" onclick="copyClassCode('${classItem.code}')">
           <i class="fas fa-copy"></i> Copy Code
         </button>
-        <!--
-        <button class="btn-warning" onclick="archiveClass('${classItem.id}')">
-          <i class="fas fa-archive"></i> Archive
-        </button> 
-        -->
         <button class="btn-danger" onclick="deleteClass('${classItem.id}')">
           <i class="fas fa-trash"></i> Delete
         </button>
@@ -1856,7 +1839,7 @@ function loadMissedTasks() {
 async function viewStudentInClass(classId, studentId) {
   const classItem = classes.find(c => String(c.id) === String(classId));
   if (!classItem) {
-    alert('❌ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
@@ -1871,7 +1854,7 @@ async function viewStudentInClass(classId, studentId) {
     classItem.students.find(s => String(s.id) === String(studentId)) : null;
   
   if (!student) {
-    alert('❌ Student not found');
+    showInfoToast('Student not found');
     return;
   }
   
@@ -2026,7 +2009,7 @@ function closeMissedStudentModal() {
 function viewAssignmentDetails(classId, assignmentId) {
   const classItem = classes.find(c => c.id === classId);
   if (!classItem) {
-    alert('âŒ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
@@ -2034,7 +2017,7 @@ function viewAssignmentDetails(classId, assignmentId) {
     classItem.assignments.find(a => a.id === assignmentId) : null;
   
   if (!assignment) {
-    alert('âŒ Assignment not found');
+    showInfoToast('Assignment not found');
     return;
   }
   
@@ -2260,7 +2243,7 @@ function viewAssignmentDetails(classId, assignmentId) {
 function viewAssignmentDetailsFromMissed(classId, assignmentId) {
   const classItem = classes.find(c => String(c.id) === String(classId));
   if (!classItem) {
-    alert('âŒ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
@@ -2268,7 +2251,7 @@ function viewAssignmentDetailsFromMissed(classId, assignmentId) {
     classItem.assignments.find(a => String(a.id) === String(assignmentId)) : null;
   
   if (!assignment) {
-    alert('âŒ Assignment not found');
+    showInfoToast('Assignment not found');
     return;
   }
   
@@ -2531,7 +2514,7 @@ function sendBulkReminders(classId, assignmentId) {
   }) : [];
   
   if (missedStudents.length === 0) {
-    alert('No students to remind - all have submitted!');
+    showInfoToast('No students to remind - all have submitted!');
     return;
   }
   
@@ -2705,7 +2688,7 @@ function copyReminderMessage() {
   textarea.select();
   document.execCommand('copy');
   
-  alert('Message copied to clipboard!');
+  showInfoToast('Message copied to clipboard!');
 }
 
 function copyBulkReminderData() {
@@ -2722,7 +2705,7 @@ function copyBulkReminderData() {
   document.execCommand('copy');
   document.body.removeChild(textarea);
   
-  alert('Email addresses and message copied to clipboard!');
+  showInfoToast('Email addresses and message copied to clipboard!');
 }
 
 function openBulkEmailClient(emails) {
@@ -2734,7 +2717,7 @@ function openBulkEmailClient(emails) {
   // User will need to move addresses to BCC manually
   window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
   
-  alert('Note: Please move the email addresses to the BCC field to protect student privacy!');
+  showInfoToast('Note: Please move the email addresses to the BCC field to protect student privacy!');
 }
 
 function closeBulkReminderModal() {
@@ -2937,21 +2920,21 @@ async function deleteClass(classId) {
       // Remove the class from the local array
       classes = classes.filter(c => c.id !== classId);
       renderClassList();
-      alert('Class deleted successfully!');
+      showSuccessToast('Class deleted successfully!');
       updateDashboardStats(); // Update dashboard after class deletion
     } else {
-      alert(result.error || 'Failed to delete class');
+      showErrorToast(result.error || 'Failed to delete class');
     }
   } catch (error) {
     console.error('Error deleting class:', error);
-    alert('Error deleting class. Please try again.');
+    showErrorToast('Error deleting class. Please try again.');
   }
 }
 
 // Copy class code to clipboard
 function copyClassCode(code) {
   navigator.clipboard.writeText(code).then(() => {
-    alert('Class code copied to clipboard!');
+    showInfoToast('Class code copied to clipboard!');
   });
 }
 
@@ -2979,7 +2962,7 @@ async function openClass(classId, isArchived = false) {
         console.error('Error loading archived class:', error);
       }
       
-      alert('❌ Class not found');
+      showInfoToast('Class not found');
       return;
     }
   
@@ -3117,7 +3100,7 @@ function displayArchivedClassView(classItem) {
 function rescheduleAssignment(classId, assignmentId) {
   const classItem = classes.find(c => String(c.id) === String(classId));
   if (!classItem) {
-    alert('❌ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
@@ -3125,7 +3108,7 @@ function rescheduleAssignment(classId, assignmentId) {
     classItem.assignments.find(a => String(a.id) === String(assignmentId)) : null;
   
   if (!assignment) {
-    alert('❌ Assignment not found');
+    showInfoToast('Assignment not found');
     return;
   }
   
@@ -3218,7 +3201,7 @@ async function saveRescheduledDate(classId, assignmentId) {
   const notifyStudents = document.getElementById('notify-students').checked;
   
   if (!newDueDate) {
-    alert('⚠️ Please select a new deadline');
+    showInfoToast('Please select a new deadline');
     return;
   }
   
@@ -3226,13 +3209,13 @@ async function saveRescheduledDate(classId, assignmentId) {
   const now = new Date();
   
   if (newDate <= now) {
-    alert('⚠️ New deadline must be in the future');
+    showWarningToast('New deadline must be in the future');
     return;
   }
   
   const classItem = classes.find(c => String(c.id) === String(classId));
   if (!classItem) {
-    alert('❌ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
@@ -3240,7 +3223,7 @@ async function saveRescheduledDate(classId, assignmentId) {
     classItem.assignments.find(a => String(a.id) === String(assignmentId)) : null;
   
   if (!assignment) {
-    alert('❌ Assignment not found');
+    showInfoToast('Assignment not found');
     return;
   }
   
@@ -3320,11 +3303,11 @@ async function saveRescheduledDate(classId, assignmentId) {
       );
     }
     
-    alert(`✅ Assignment rescheduled successfully!\n\nNew deadline: ${newDate.toLocaleString()}\n${notifyStudents ? 'Students will be notified.' : ''}`);
+    showSuccessToast(`Assignment rescheduled successfully!\n\nNew deadline: ${newDate.toLocaleString()}\n${notifyStudents ? 'Students will be notified.' : ''}`);
     
   } catch (error) {
     console.error('❌ Error rescheduling assignment:', error);
-    alert('❌ Failed to reschedule assignment: ' + error.message);
+    showErrorToast('Failed to reschedule assignment: ' + error.message);
   }
 }
 
@@ -3510,11 +3493,11 @@ async function deleteAssignment(assignmentId) {
     
     updateDashboardStats();
     
-    alert('✅ Assignment deleted successfully!');
+    showSuccessToast('Assignment deleted successfully!');
     
   } catch (error) {
     console.error('❌ Error deleting assignment:', error);
-    alert('❌ Error deleting assignment: ' + error.message);
+    showErrorToast('Error deleting assignment: ' + error.message);
   }
 }
 
@@ -3580,11 +3563,11 @@ async function deleteMaterial(materialId) {
     
     updateDashboardStats();
     
-    alert('✅ Material deleted successfully!');
+    showSuccessToast('Material deleted successfully!');
     
   } catch (error) {
     console.error('❌ Error deleting material:', error);
-    alert('❌ Error deleting material: ' + error.message);
+    showErrorToast('Error deleting material: ' + error.message);
   }
 }
 
@@ -3604,11 +3587,11 @@ function clearLocalStorageCache() {
       if (avatar) localStorage.setItem(`${userType}_avatar`, avatar);
       if (notifications) localStorage.setItem(`${userType}_notifications`, notifications);
       
-      alert('✅ Cache cleared! Reloading page...');
+      showSuccessToast('Cache cleared! Reloading page...');
       window.location.reload();
     } catch (e) {
       console.error('Error clearing cache:', e);
-      alert('❌ Failed to clear cache. Please try manually clearing browser data.');
+      showErrorToast('Failed to clear cache. Please try manually clearing browser data.');
     }
   }
 }
@@ -3965,13 +3948,13 @@ async function uploadMaterial() {
   const filesInput = document.getElementById('lesson-file');
   
   if (!title) {
-    alert('Please enter a title');
+    showWarningToast('Please enter a title');
     return;
   }
   
   const classItem = classes.find(c => c.id === currentClassId);
   if (!classItem) {
-    alert('Error: Class not found.');
+    showErrorToast('Error: Class not found.');
     return;
   }
   
@@ -4026,7 +4009,7 @@ async function uploadMaterial() {
       
     } catch (error) {
       console.error('Error uploading files:', error);
-      alert('Error uploading files: ' + error.message);
+      showErrorToast('Error uploading files: ' + error.message);
       const postBtn = document.getElementById('post-upload');
       postBtn.innerHTML = 'Post Material';
       postBtn.disabled = false;
@@ -4087,11 +4070,11 @@ async function saveMaterial(material) {
     document.getElementById('upload-form').classList.add('hidden');
     resetUploadForm();
     
-    alert('✅ Material posted successfully!');
+    showSuccessToast('Material posted successfully!');
     
   } catch (error) {
     console.error('❌ Error saving material:', error);
-    alert('❌ Error saving material: ' + error.message);
+    showErrorToast('Error saving material: ' + error.message);
   }
 }
 
@@ -4225,7 +4208,7 @@ async function removeStudentFromClass(studentId, studentName) {
   try {
     const classItem = classes.find(c => c.id === currentClassId);
     if (!classItem) {
-      alert('Error: Class not found');
+      showErrorToast('Error: Class not found');
       return;
     }
     
@@ -4281,14 +4264,14 @@ async function removeStudentFromClass(studentId, studentName) {
         `class:${currentClassId}`
       );
       
-      alert(` ${studentName} has been successfully removed from the class.`);
+      showSuccessToast(` ${studentName} has been successfully removed from the class.`);
       
     } else {
-      alert(result.error || 'Failed to remove student');
+      showWarningToast(result.error || 'Failed to remove student');
     }
   } catch (error) {
     console.error('Error removing student:', error);
-    alert('Error removing student. Please try again.');
+    showErrorToast('Error removing student. Please try again.');
   }
 }
 
@@ -4299,7 +4282,7 @@ function viewStudentDetails(studentId) {
   
   const student = classItem.students.find(s => String(s.id) === String(studentId));
   if (!student) {
-    alert('Student not found');
+    showInfoToast('Student not found');
     return;
   }
   
@@ -4417,13 +4400,13 @@ async function saveAssignment() {
   const filesInput = document.getElementById('assignment-files');
   
   if (!title || !description || !dueDate) {
-    alert('Please fill in all required fields');
+    showWarningToast('Please fill in all required fields');
     return;
   }
   
   const classItem = classes.find(c => c.id === currentClassId);
   if (!classItem) {
-    alert('Error: Class not found.');
+    showErrorToast('Error: Class not found.');
     return;
   }
   
@@ -4486,8 +4469,8 @@ async function saveAssignment() {
       await saveAssignmentToClass(assignment);
       
     } catch (uploadError) {
-      console.error('Ã¢Å’ Error during file upload:', uploadError);
-      alert('Ã¢Å’ Error uploading files: ' + uploadError.message);
+      console.error('Error during file upload:', uploadError);
+      showErrorToast('Error uploading files: ' + uploadError.message);
       const saveBtn = document.getElementById('save-assignment');
       saveBtn.innerHTML = 'Create Assignment';
       saveBtn.disabled = false;
@@ -4595,7 +4578,7 @@ async function saveAssignmentToClass(assignment) {
         assignmentModal.style.display = 'none';
         resetAssignmentForm();
         
-        alert('✅ Assignment created successfully and added to calendar!');
+        showSuccessToast('Assignment created successfully and added to calendar!');
         
         addNotification(
           'assignment',
@@ -4607,7 +4590,7 @@ async function saveAssignmentToClass(assignment) {
         resolve();
       } catch (error) {
         console.error('❌ Error saving assignment:', error);
-        alert('❌ Error saving assignment: ' + error.message);
+        showErrorToast('Error saving assignment: ' + error.message);
         reject(error);
       }
     });
@@ -4652,7 +4635,7 @@ async function viewSubmissions(assignmentId) {
     
   const classItem = classes.find(c => c.id === currentClassId);
   if (!classItem) {
-    alert('❌ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
@@ -4682,7 +4665,7 @@ async function viewSubmissions(assignmentId) {
   }
   
   if (!assignment) {
-    alert('❌ Assignment not found. It may have been deleted.');
+    showErrorToast('Assignment not found. It may have been deleted.');
     return;
   }
   
@@ -4925,13 +4908,13 @@ function openGradingModal(assignmentId, studentId) {
   
   const classItem = classes.find(c => c.id === currentClassId);
   if (!classItem) {
-    alert('❌ Class not found');
+    showInfoToast('Class not found');
     return;
   }
   
   const assignment = classItem.assignments.find(a => a.id === assignmentId);
   if (!assignment) {
-    alert('❌ Assignment not found');
+    showInfoToast('Assignment not found');
     return;
   }
   
@@ -4939,7 +4922,7 @@ function openGradingModal(assignmentId, studentId) {
     assignment.submissions.find(s => String(s.studentId) === String(studentId)) : null;
   
   if (!submission) {
-    alert('❌ Submission not found');
+    showInfoToast('Submission not found');
     return;
   }
   
@@ -5115,7 +5098,7 @@ function checkStorageUsage() {
     if (percentUsed > 80) {
       console.warn('âš ï¸ Storage nearly full! Consider clearing old data.');
       if (percentUsed > 95) {
-        alert('âš ï¸ Warning: Storage is almost full. Please clear some data or avoid uploading large files.');
+        showWarningToast('Warning: Storage is almost full. Please clear some data or avoid uploading large files.');
       }
     }
     
@@ -5148,7 +5131,7 @@ async function saveGrade() {
     // ✅ FIX: Better validation
     if (!assignmentId || !studentId || !classId) {
         console.error('❌ Missing required IDs:', { assignmentId, studentId, classId });
-        alert('❌ Error: Missing assignment, student, or class information. Please reopen the grading modal.');
+        showErrorToast('Error: Missing assignment, student, or class information. Please reopen the grading modal.');
         return;
     }
     
@@ -5157,14 +5140,14 @@ async function saveGrade() {
     
     if (!gradeInput) {
         console.error('❌ Grade input not found');
-        alert('Error: Grade input field not found');
+        showErrorToast('Error: Grade input field not found');
         return;
     }
     
     const gradeValue = gradeInput.value.trim();
     
     if (gradeValue === '') {
-        alert('⚠️ Please enter a grade');
+        showWarningToast('Please enter a grade');
         gradeInput.focus();
         return;
     }
@@ -5173,7 +5156,7 @@ async function saveGrade() {
     const feedback = feedbackInput ? feedbackInput.value.trim() : '';
     
     if (isNaN(grade)) {
-        alert('⚠️ Please enter a valid number');
+        showWarningToast('Please enter a valid number');
         gradeInput.focus();
         return;
     }
@@ -5181,20 +5164,20 @@ async function saveGrade() {
     // ✅ FIX: Verify all data is still valid
     const classItem = classes.find(c => String(c.id) === String(classId));
     if (!classItem) {
-        alert('❌ Class not found');
+        showInfoToast('Class not found');
         return;
     }
     
     const assignment = classItem.assignments ? classItem.assignments.find(a => String(a.id) === String(assignmentId)) : null;
     if (!assignment) {
-        alert('❌ Assignment not found');
+        showInfoToast('Assignment not found');
         return;
     }
     
     const maxPoints = assignment.points || 100;
     
     if (grade < 0 || grade > maxPoints) {
-        alert(`⚠️ Grade must be between 0 and ${maxPoints}`);
+        showWarningToast(`Grade must be between 0 and ${maxPoints}`);
         gradeInput.focus();
         return;
     }
@@ -5203,7 +5186,7 @@ async function saveGrade() {
         assignment.submissions.find(s => String(s.studentId) === String(studentId)) : null;
     
     if (!submission) {
-        alert('❌ Submission not found');
+        showInfoToast('Submission not found');
         return;
     }
     
@@ -5265,7 +5248,7 @@ async function saveGrade() {
         // Success message
         const studentName = submission.studentName || 'Student';
         const percentage = ((grade / maxPoints) * 100).toFixed(1);
-        alert(`✅ Grade Saved Successfully!\n\nStudent: ${studentName}\nGrade: ${grade}/${maxPoints} (${percentage}%)\n${feedback ? 'Feedback: ' + feedback : ''}`);
+        showSuccessToast(`Grade Saved Successfully!\n\nStudent: ${studentName}\nGrade: ${grade}/${maxPoints} (${percentage}%)\n${feedback ? 'Feedback: ' + feedback : ''}`);
         
         console.log('✅ Grade saved successfully!');
         
@@ -5276,7 +5259,7 @@ async function saveGrade() {
         
     } catch (error) {
         console.error('❌ Error saving grade:', error);
-        alert('❌ Failed to save grade: ' + error.message);
+        showErrorToast('Failed to save grade: ' + error.message);
     }
 }
 
@@ -5463,7 +5446,7 @@ function loadClassGrades() {
 function exportStudentList() {
   const classItem = classes.find(c => c.id === currentClassId);
   if (!classItem || !classItem.students || classItem.students.length === 0) {
-    alert('No students to export');
+    showInfoToast('No students to export');
     return;
   }
   
@@ -5579,13 +5562,13 @@ function downloadFile(filename, urlOrContent) {
       
     } catch (e) {
       console.error('❌ Error downloading file:', e);
-      alert('Error downloading file: ' + e.message);
+      showErrorToast('Error downloading file: ' + e.message);
     }
     return;
   }
   
   console.error('❌ Invalid file format:', urlOrContent ? urlOrContent.substring(0, 50) : 'empty');
-  alert('⚠️ Invalid file format. Please contact your professor.');
+  showWarningToast('Invalid file format. Please contact your professor.');
 }
 
 // VIDEO PLAYER for professors
@@ -5904,7 +5887,7 @@ function deleteEvent(dateKey, eventIndex) {
     openEventModal(year, month, day);
   }
   
-  alert('Event deleted successfully!');
+  showSuccessToast('Event deleted successfully!');
 }
 
 document.getElementById('close-event').addEventListener('click', () => {
@@ -5915,12 +5898,12 @@ document.getElementById('close-event').addEventListener('click', () => {
 document.getElementById('save-event').addEventListener('click', () => {
     const eventText = document.getElementById('event-text').value.trim();
     if (!eventText) {
-        alert('Please enter event text');
+        showWarningToast('Please enter event text');
         return;
     }
     
     if (!currentSelectedDate) {
-        alert('Error: No date selected.');
+        showWarningToast('Error: No date selected.');
         return;
     }
     
@@ -5943,7 +5926,7 @@ document.getElementById('save-event').addEventListener('click', () => {
     const day = currentSelectedDate.getDate();
     openEventModal(year, month, day);
     
-    alert('Event saved successfully!');
+    showSuccessToast('Event saved successfully!');
 });
 
 // Update dashboard statistics
@@ -6156,13 +6139,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file (JPG, PNG, GIF)');
+        showInfoToast('Please select an image file (JPG, PNG, GIF)');
         return;
       }
       
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size must be less than 5MB');
+        sho('Image size must be less than 5MB');
         return;
       }
       
@@ -6741,3 +6724,18 @@ function checkForNewAssignments() {
   localStorage.setItem('student_notified_items', JSON.stringify([...notifiedItems]));
   localStorage.setItem('student_last_assignment_check', now.toISOString());
 }
+
+// Add global error handler
+window.addEventListener('error', function(e) {
+  console.error('Global error:', e.error);
+  
+  // Don't show error alerts in production
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    showErrorToast('JavaScript Error', e.message);
+  }
+});
+
+// Add promise rejection handler
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('Unhandled promise rejection:', e.reason);
+});
